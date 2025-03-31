@@ -21,7 +21,6 @@ const QCard = ({
   const openBuzzerSound = new Audio("/open_buzzers.mp3");
   const rightAnswerSound = new Audio("/correct_answer.mp3");
   const wrongAnswerSound = new Audio("/wrong_answer.mp3");
-  const dailyDoubleSound = new Audio("/daily_double.mp3");
 
   React.useEffect(() => {
     if (question?.imageId) {
@@ -30,6 +29,7 @@ const QCard = ({
       );
     }
     if (question?.double) {
+      const dailyDoubleSound = new Audio("/daily_double.mp3");
       dailyDoubleSound.play();
       setIsDailyDouble(true);
     }
@@ -89,7 +89,7 @@ const QCard = ({
     <div
       className={`relative flex items-center justify-center w-full text-center p-6 font-bold rounded-3xl cursor-pointer ${
         isDailyDouble
-          ? "bg-blue-600 text-yellow-500"
+          ? "bg-red-500 text-yellow-300"
           : "bg-yellow-500 text-purple-800"
       }`}
       onClick={() => handleQuestionClick()}
@@ -110,6 +110,14 @@ const QCard = ({
 
       {questionState === "question" ? (
         <>
+          {/* Daily Double Banner */}
+          {isDailyDouble && (
+            <h3 className="absolute top-2 left-2 bg-red-700 text-white px-2 py-1 rounded-full text-center text-3xl font-bold">
+              Daily Double
+            </h3>
+          )}
+
+          {/* Question Text */}
           <h4 className="text-3xl max-w-[80%]">{`${question.question}`}</h4>
 
           {/* Lock Icon in Bottom Right */}

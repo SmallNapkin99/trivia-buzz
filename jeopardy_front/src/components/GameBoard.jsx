@@ -26,7 +26,6 @@ const GameBoard = () => {
           throw new Error("Error fetching game");
         }
         const data = await response.json();
-        setGame(data);
         return data;
       } catch (error) {
         console.log(error.message);
@@ -41,27 +40,76 @@ const GameBoard = () => {
           throw new Error("Error fetching questions");
         }
         const data = await response.json();
-        //TODO --> set dynamic daily doubles here. 2 per round
-        //don't allow them to be in the same category
-        //do I have access to "game" from here?
-        setQuestions(data);
         return data;
       } catch (error) {
         console.log(error.message);
       }
     };
+    const setDailyDoubles = (questions, game) => {
+      for (let round = 1; round <= game.rounds; round++) {
+        const roundQuestions = questions.filter((q) => q.round === round);
 
-    const game = fetchGame();
-    const questions = fetchQuestions();
+        const roundCategories = game.categories
+          .filter((cat) => cat.round === round)
+          .map((cat) => cat.name);
 
-    // if (questions.length < game.questionTotal) {
-    //   alert(
-    //     `There are ${
-    //       game.questionTotal - questions.length
-    //     } questions missing. Rerouting to edit page.`
-    //   );
-    //   navigate(`/game/${gameId}/edit`);
-    // }
+        let dailyDoubleCategories = [];
+        while (dailyDoubleCategories.length < 2 && roundCategories.length > 0) {
+          const randomIndex = Math.floor(
+            Math.random() * roundCategories.length
+          );
+          const selectedCategory = roundCategories[randomIndex];
+          if (!dailyDoubleCategories.includes(selectedCategory)) {
+            dailyDoubleCategories.push(selectedCategory);
+          }
+        }
+        for (const category of dailyDoubleCategories) {
+          const categoryQuestions = roundQuestions.filter(
+            (q) => q.category === category
+          );
+
+          if (categoryQuestions.length > 0) {
+            const randomIndex = Math.floor(
+              Math.random() * categoryQuestions.length
+            );
+            const selectedQuestion = categoryQuestions[randomIndex];
+
+            selectedQuestion.double = true;
+            setQuestions((prevQuestions) =>
+              prevQuestions.map((q) =>
+                q._id === selectedQuestion._id ? selectedQuestion : q
+              )
+            );
+          }
+        }
+      }
+    };
+
+    // const fetchData = async () => {
+    //   const gameData = await fetchGame();
+    //   const questionsData = await fetchQuestions();
+    //   if (questionsData.length < gameData.questionTotal) {
+    //     alert(
+    //       `There are ${
+    //         gameData.questionTotal - questionsData.length
+    //       } questions missing. Rerouting to edit page.`
+    //     );
+    //     navigate(`/game/${gameId}/edit`);
+    //   } else {
+    //     setGame(gameData);
+    //     setQuestions(questionsData);
+    //     setDailyDoubles(questionsData, gameData);
+    //   }
+    // };
+
+    const fetchData = async () => {
+      const gameData = await fetchGame();
+      const questionsData = await fetchQuestions();
+      setGame(gameData);
+      setQuestions(questionsData);
+      setDailyDoubles(questionsData, gameData);
+    };
+    fetchData();
   }, [gameId]);
 
   const handleCloseBuzzers = React.useCallback(() => {
