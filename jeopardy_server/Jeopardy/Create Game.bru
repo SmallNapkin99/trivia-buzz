@@ -1,0 +1,24 @@
+meta {
+  name: Create Game
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8080/api/games
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Dagobah",
+    "categories": [
+      "sports",
+      "history",
+      "music",
+      "pop culture",
+      "pokemon"
+    ]
+  }
+}

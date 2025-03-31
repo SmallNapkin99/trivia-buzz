@@ -1,0 +1,21 @@
+meta {
+  name: Post Question
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api/questions
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "question": "Is this thing on?",
+    "answer": "Yes it is!",
+    "gameId": "678d5723a3a8f7d5ee2811d8",
+    "category": "Debugging",
+    "value": "100"
+  }
+}
