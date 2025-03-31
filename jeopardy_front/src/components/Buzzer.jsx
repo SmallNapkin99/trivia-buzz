@@ -1,4 +1,5 @@
 import React from "react";
+import { HandRaisedIcon } from "@heroicons/react/24/outline";
 import { useLocation } from "react-router-dom";
 import { useWebSocket } from "./WebSocketContext";
 
@@ -76,18 +77,19 @@ const Buzzer = () => {
       <div className="text-5xl text-yellow-500 font-extrabold border-b-4 border-purple-600 text-center py-6 w-full">
         {player?.name}
       </div>
-      <div className="flex-grow flex justify-center items-center w-full h-full">
+      <div className="relative flex flex-grow items-center justify-center w-full h-full">
         <button
-          className="font-extrabold rounded-3xl font-sans text-purple-700 h-[80%] w-full text-5xl shadow-lg"
+          className="w-[75%] h-[75%] rounded-full flex items-center justify-center shadow-lg border-8 border-yellow-300"
           onClick={() => handleBuzz(playerId)}
           disabled={lockBuzzer}
           style={{
-            backgroundColor: lockBuzzer ? "#d1d5db" : "#eab308",
+            backgroundColor: lockBuzzer ? "#b91c1c" : "#166534",
           }}
         >
-          {lockBuzzer ? "Locked" : "Buzzer"}
+          <HandRaisedIcon className="w-[40%] h-[40%] text-yellow-300" />
         </button>
       </div>
+
       <div className="text-5xl text-yellow-500 font-extrabold border-t-4 border-purple-600 text-center py-6 w-full">
         {player?.score}
       </div>
