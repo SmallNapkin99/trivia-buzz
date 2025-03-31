@@ -85,6 +85,7 @@ const GameBoard = () => {
   };
 
   React.useEffect(() => {
+    const buzzedInSound = new Audio("/buzzed_in.mp3");
     //set socket listener
     if (socket) {
       handleCloseBuzzers();
@@ -96,6 +97,7 @@ const GameBoard = () => {
           setPlayers(playerList);
         }
         if (data.action === "buzzed_in") {
+          buzzedInSound.play();
           const { playerId } = data;
           setPlayers((prevPlayers) => {
             const player = prevPlayers.find((player) => player.id === playerId);
@@ -104,7 +106,6 @@ const GameBoard = () => {
             }
             return prevPlayers;
           });
-          //TODO --> play buzz in sound
         }
       };
       //send ws message to get player list
@@ -126,6 +127,9 @@ const GameBoard = () => {
   }, [socket, handleCloseBuzzers]);
 
   const updateScore = (scoreUpdate) => {
+    if (!buzzedPlayer) {
+      return;
+    }
     const _newScore = buzzedPlayer.score + scoreUpdate;
     setPlayers((prevPlayers) =>
       prevPlayers.map((player) =>
@@ -183,10 +187,14 @@ const GameBoard = () => {
         setCurrentRound((prev) => prev + 1);
       }
     }
-    setAnsweredQuestions((prev) => [...prev, questionId]);
-    setFocusedQuestion(null);
-    setFocusedCategory(null);
-    handleCloseBuzzers();
+    if (!buzzedPlayer) {
+      return;
+    } else {
+      setAnsweredQuestions((prev) => [...prev, questionId]);
+      setFocusedQuestion(null);
+      setFocusedCategory(null);
+      handleCloseBuzzers();
+    }
   };
 
   return (

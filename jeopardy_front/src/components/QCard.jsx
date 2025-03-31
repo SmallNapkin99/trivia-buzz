@@ -18,6 +18,11 @@ const QCard = ({
   const [imageModalOpen, setImageModalOpen] = React.useState(false);
   const [modalImage, setModalImage] = React.useState(null);
 
+  const openBuzzerSound = new Audio("/open_buzzers.mp3");
+  const rightAnswerSound = new Audio("/correct_answer.mp3");
+  const wrongAnswerSound = new Audio("/wrong_answer.mp3");
+  const dailyDoubleSound = new Audio("/daily_double.mp3");
+
   React.useEffect(() => {
     if (question?.imageId) {
       setImageSrc(
@@ -25,7 +30,7 @@ const QCard = ({
       );
     }
     if (question?.double) {
-      //TODO --> play daily double sound effect
+      dailyDoubleSound.play();
       setIsDailyDouble(true);
     }
   }, [question]);
@@ -52,7 +57,6 @@ const QCard = ({
   };
 
   const handleOpenBuzzers = () => {
-    const openBuzzerSound = new Audio("/open_buzzers.mp3");
     openBuzzerSound.play();
     onOpenBuzzers();
   };
@@ -64,9 +68,9 @@ const QCard = ({
   const handleUpdateScore = (scoreUpdate) => {
     const _scoreUpdate = !isDailyDouble ? scoreUpdate : scoreUpdate * 2;
     if (_scoreUpdate > 0) {
-      //TODO --> play right answer sound
+      rightAnswerSound.play();
     } else {
-      //TODO --> play wrong answer sound
+      wrongAnswerSound.play();
     }
     onScoreUpdate(_scoreUpdate);
     onAnswer();
