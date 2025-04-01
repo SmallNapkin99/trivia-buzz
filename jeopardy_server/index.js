@@ -185,5 +185,5 @@ wss.on("connection", (ws) => {
 
 // Start the HTTP server on port 8080 (this is the same server that will handle both HTTP and WebSocket)
 server.listen(8080, () => {
-  console.log("Express server listening on http://localhost:8080");
+  console.log("Express server listening on port 8080");
 });

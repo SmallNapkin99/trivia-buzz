@@ -27,7 +27,9 @@ export const WebSocketProvider = ({ children }) => {
         }
         isConnecting = true;
 
-        ws = new WebSocket(`ws://localhost:8080/game/${gameId}`);
+        ws = new WebSocket(
+          `${process.env.REACT_APP_WEBSOCKET_URL}/game/${gameId}`
+        );
 
         ws.onopen = () => {
           console.log(`Connected to WebSocket for game: ${gameId}`);

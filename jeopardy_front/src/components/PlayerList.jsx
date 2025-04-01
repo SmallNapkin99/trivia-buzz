@@ -53,7 +53,7 @@ const PlayerList = () => {
 
   return (
     <div className="flex h-screen">
-      {/* Left section for QR Code THE QR IS TOO FAR TO THE LEFT && CHANGE THE TEXT COLOR*/}
+      {/* Left section for QR Code */}
       <div className="flex flex-1 justify-center items-center p-6">
         <div className="text-center">
           <h3 className="text-4xl font-extrabold font-sans text-yellow-500 mb-12">
