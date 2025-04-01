@@ -183,7 +183,8 @@ wss.on("connection", (ws) => {
   });
 });
 
-// Start the HTTP server on port 8080 (this is the same server that will handle both HTTP and WebSocket)
-server.listen(8080, () => {
-  console.log("Express server listening on port 8080");
+const PORT = process.env.PORT || 8080;
+// Start the HTTP server on port assigned by hosting service or on 8080 (this is the same server that will handle both HTTP and WebSocket)
+server.listen(PORT, () => {
+  console.log(`Express server listening on port ${PORT}`);
 });
