@@ -60,7 +60,7 @@ const PlayerList = () => {
             Join Game
           </h3>
           <QRCodeSVG
-            value={`${process.env.REACT_APP_FRONTEND_URL}/game/${gameId}/readyup`}
+            value={`${process.env.REACT_APP_FRONTEND_URL}/#/game/${gameId}/readyup`}
             size={256}
             fgColor="#eab308"
             bgColor="transparent"
