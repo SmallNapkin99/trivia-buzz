@@ -4,15 +4,15 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import PageFrame from "./components/PageFrame";
 import App from "./App";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <PageFrame
     content={
-      <BrowserRouter>
+      <HashRouter>
         <App />
-      </BrowserRouter>
+      </HashRouter>
     }
   />
 );
