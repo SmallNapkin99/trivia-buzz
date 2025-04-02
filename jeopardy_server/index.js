@@ -8,17 +8,11 @@ import http from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import dotenv from "dotenv";
 import { initGridFSBucket } from "./src/utils/gridfs.js";
-import path from "path";
-import { fileURLToPath } from "url";
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
-
-// Workaround to get __dirname in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -35,14 +29,6 @@ app.use(express.json());
 app.use("/api/games", gameRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/images", imageRoutes);
-
-// Serve static files from React build
-app.use(express.static(path.join(__dirname, "build")));
-
-// Catch-all route to serve the React app for all non-API routes
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
 
 // Create an HTTP server from your Express app
 const server = http.createServer(app);
