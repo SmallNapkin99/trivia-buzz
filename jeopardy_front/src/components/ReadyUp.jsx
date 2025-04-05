@@ -12,7 +12,7 @@ const ReadyUp = () => {
   React.useEffect(() => {
     //scroll down to shrink safari margins on mobile
     setTimeout(() => {
-      window.scrollTo(0, 50);
+      window.scrollTo(0, 100);
     }, 100);
   }, []);
 
