@@ -73,7 +73,7 @@ const Buzzer = () => {
   };
 
   return (
-    <div className="flex flex-col overflow-hidden items-center justify-between h-screen px-6 py-6">
+    <div className="flex flex-col items-center justify-between h-screen px-6 py-6">
       <div className="text-5xl text-yellow-500 font-extrabold border-b-4 border-purple-600 text-center py-6 w-full">
         {player?.name}
       </div>
