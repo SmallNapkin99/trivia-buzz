@@ -12,8 +12,7 @@ const Buzzer = () => {
 
   React.useEffect(() => {
     setTimeout(() => {
-      window.scrollTo(0, 1);
-      window.scrollTo(0, 0);
+      window.scrollTo(0, 10);
     }, 100);
     if (socket) {
       //set socket listener
@@ -77,7 +76,7 @@ const Buzzer = () => {
   };
 
   return (
-    <div className="flex flex-col overflow-hidden items-center justify-between min-h-[100vh] px-6 py-6">
+    <div className="flex flex-col overflow-hidden items-center justify-between h-screen px-6 py-6">
       <div className="text-5xl text-yellow-500 font-extrabold border-b-4 border-purple-600 text-center py-6 w-full">
         {player?.name}
       </div>
