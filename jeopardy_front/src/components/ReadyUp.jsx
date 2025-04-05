@@ -10,8 +10,9 @@ const ReadyUp = () => {
   const [playerName, setPlayerName] = React.useState("");
 
   React.useEffect(() => {
+    //scroll down to shrink safari margins on mobile
     setTimeout(() => {
-      window.scrollTo(0, 10);
+      window.scrollTo(0, 50);
     }, 100);
   }, []);
 
