@@ -33,6 +33,28 @@ const ReadyUp = () => {
       );
 
       console.log(`${playerName} is ready with ID: ${playerId}`);
+
+      // Trigger Fullscreen API before navigating to the Buzzer component
+      const requestFullscreen = () => {
+        const element = document.documentElement; // Full page
+        if (element.requestFullscreen) {
+          // Chrome
+          element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+          // Firefox
+          element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+          // Safari
+          element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+          // IE/Edge
+          element.msRequestFullscreen();
+        }
+      };
+
+      // Trigger fullscreen when the user clicks the "Ready Up" button
+      requestFullscreen();
+
       navigate(`/game/${gameId}/buzzer`, { state: { playerId } });
     }
   };
