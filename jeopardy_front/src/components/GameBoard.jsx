@@ -339,6 +339,7 @@ const GameBoard = () => {
                             q.round === currentRound &&
                             q.category === category.name
                         )
+                        .sort((a, b) => a.value - b.value)
                         .map((question, idx) => (
                           <div
                             key={idx}
