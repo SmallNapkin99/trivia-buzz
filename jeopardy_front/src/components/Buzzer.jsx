@@ -11,10 +11,6 @@ const Buzzer = () => {
   const [lockBuzzer, setLockBuzzer] = React.useState(false);
 
   React.useEffect(() => {
-    //scroll down to shrink safari margins on mobile
-    setTimeout(() => {
-      window.scrollTo(0, 100);
-    }, 100);
     if (socket) {
       //set socket listener
       socket.onmessage = (event) => {

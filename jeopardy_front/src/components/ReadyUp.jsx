@@ -9,13 +9,6 @@ const ReadyUp = () => {
   const navigate = useNavigate();
   const [playerName, setPlayerName] = React.useState("");
 
-  React.useEffect(() => {
-    //scroll down to shrink safari margins on mobile
-    setTimeout(() => {
-      window.scrollTo(0, 100);
-    }, 100);
-  }, []);
-
   const handleReadyUp = () => {
     if (socket && playerName) {
       //make sure player name is not empty
