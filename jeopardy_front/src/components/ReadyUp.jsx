@@ -9,6 +9,13 @@ const ReadyUp = () => {
   const navigate = useNavigate();
   const [playerName, setPlayerName] = React.useState("");
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo(0, 1);
+      window.scrollTo(0, 0);
+    }, 100);
+  }, []);
+
   const handleReadyUp = () => {
     if (socket && playerName) {
       //make sure player name is not empty
