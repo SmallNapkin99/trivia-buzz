@@ -60,7 +60,11 @@ const ReadyUp = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-16 min-h-screen">
+    <div
+      className="flex flex-col items-center justify-center space-y-16 min-h-screen pt-safe pb-safe"
+      style={{ height: "100dvh" }}
+    >
+      <h1 className="text-yellow-500 text-3xl font-extrabold">Player Name</h1>
       <input
         type="text"
         placeholder="Enter your name"
