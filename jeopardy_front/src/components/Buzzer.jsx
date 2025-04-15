@@ -11,6 +11,7 @@ const Buzzer = () => {
   const [lockBuzzer, setLockBuzzer] = React.useState(false);
 
   React.useEffect(() => {
+    window.scrollTo(0, 0);
     if (socket) {
       //set socket listener
       socket.onmessage = (event) => {
@@ -80,7 +81,7 @@ const Buzzer = () => {
       <div className="text-5xl text-yellow-500 font-extrabold border-b-4 border-purple-600 text-center py-6 w-full">
         {player?.name}
       </div>
-      <div className="relative flex flex-grow items-center justify-center w-full">
+      <div className="relative flex flex-1 items-center justify-center w-full">
         <button
           className="w-[75%] h-[75%] rounded-full flex items-center justify-center shadow-lg border-8 border-yellow-300"
           onClick={() => handleBuzz(playerId)}
