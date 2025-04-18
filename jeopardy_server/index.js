@@ -37,11 +37,13 @@ const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
 const players = new Map();
+const questionsAnswered = new Set();
 let buzzersActive = false;
 let firstPlayerToBuzz = null;
 const resetGame = () => {
   console.log("Resetting game. Clearing all player data...");
   players.clear();
+  questionsAnswered.clear();
   firstPlayerToBuzz = null;
   buzzersActive = false;
 };
@@ -109,6 +111,19 @@ wss.on("connection", (ws) => {
           client.send(scoreUpdate);
         }
       });
+    }
+
+    if (data.action === "question_answered") {
+      const { questionId } = data;
+      questionsAnswered.add(questionId);
+    }
+
+    if (data.action === "get_answered_questions") {
+      const answeredQuestions = JSON.stringify({
+        action: "set_answered_questions",
+        questions: Array.from(questionsAnswered),
+      });
+      ws.send(answeredQuestions);
     }
 
     if (data.action === "remove_player") {

@@ -144,6 +144,11 @@ const GameBoard = () => {
           const { players: playerList } = data;
           setPlayers(playerList);
         }
+        if (data.action === "set_answered_questions") {
+          console.log("Answered questions: ", data.questions);
+          const { questions } = data;
+          setAnsweredQuestions(questions);
+        }
         if (data.action === "buzzed_in") {
           buzzedInSound.play();
           const { playerId } = data;
@@ -160,6 +165,12 @@ const GameBoard = () => {
       socket.send(
         JSON.stringify({
           action: "get_players",
+        })
+      );
+      //send ws message to get answered questions
+      socket.send(
+        JSON.stringify({
+          action: "get_answered_questions",
         })
       );
     } else {
@@ -246,6 +257,13 @@ const GameBoard = () => {
     if (!buzzedPlayer) {
       return;
     } else {
+      //send ws message to update answered questions
+      socket.send(
+        JSON.stringify({
+          action: "question_answered",
+          questionId: questionId,
+        })
+      );
       setAnsweredQuestions((prev) => [...prev, questionId]);
       setFocusedQuestion(null);
       setFocusedCategory(null);
