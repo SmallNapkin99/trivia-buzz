@@ -220,7 +220,15 @@ const GameBoard = () => {
   };
 
   const handleQuestionClick = (question) => {
-    setFocusedQuestion((prev) => (prev === question ? null : question));
+    setFocusedQuestion((prev) => {
+      if (prev === question) {
+        return null;
+      }
+      if ("value" in question) {
+        return { ...question, value: question.value * currentRound };
+      }
+      return question;
+    });
     setFocusedCategory((prev) =>
       prev === question.category ? null : question.category
     );
@@ -325,6 +333,7 @@ const GameBoard = () => {
                   onCloseBuzzers={() => handleCloseBuzzers()}
                   onOpenBuzzers={() => handleOpenBuzzers()}
                   onScoreUpdate={(scoreUpdate) => updateScore(scoreUpdate)}
+                  socket={socket}
                 />
               </div>
             ) : (
@@ -351,7 +360,9 @@ const GameBoard = () => {
                             onClick={() => handleQuestionClick(question)}
                           >
                             <div className="flex items-center justify-center w-full text-center p-6 bg-yellow-500 text-purple-800 font-bold rounded-3xl hover:bg-yellow-300 cursor-pointer animate-fadeIn">
-                              <h4 className="text-xl">{`${question.value}`}</h4>
+                              <h4 className="text-xl">{`${
+                                question.value * currentRound
+                              }`}</h4>
                             </div>
                           </div>
                         ))}

@@ -10,6 +10,7 @@ const QCard = ({
   onCloseBuzzers,
   onOpenBuzzers,
   onScoreUpdate,
+  socket,
 }) => {
   const [questionState, setQuestionState] = React.useState("question");
   const [questionLocked, setQuestionLocked] = React.useState(true);
@@ -17,6 +18,7 @@ const QCard = ({
   const [imageSrc, setImageSrc] = React.useState(null);
   const [imageModalOpen, setImageModalOpen] = React.useState(false);
   const [modalImage, setModalImage] = React.useState(null);
+  const [isBuzzedPlayer, setIsBuzzedPlayer] = React.useState(false);
 
   const openBuzzerSound = new Audio("/open_buzzers.mp3");
   const rightAnswerSound = new Audio("/correct_answer.mp3");
@@ -35,9 +37,30 @@ const QCard = ({
     }
   }, [question]);
 
+  React.useEffect(() => {
+    //set socket listener
+    if (socket) {
+      //message handler
+      const handleMessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.action === "buzzed_in") {
+          setIsBuzzedPlayer(true);
+        }
+      };
+      socket.addEventListener("message", handleMessage);
+      //clean up listener on unmount
+      return () => {
+        socket.removeEventListener("message", handleMessage);
+      };
+    }
+  }, [socket]);
+
   const handleQuestionClick = () => {
     if (questionState === "question") {
-      if (question.value && questionLocked) {
+      if (
+        (question.value && questionLocked) ||
+        (question.value && !isBuzzedPlayer)
+      ) {
         return;
       } else {
         setQuestionState("answer");
