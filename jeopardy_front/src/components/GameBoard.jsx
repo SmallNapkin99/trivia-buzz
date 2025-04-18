@@ -277,7 +277,7 @@ const GameBoard = () => {
       {game && (
         <div className="flex justify-center w-full">
           <div
-            className="grid gap-6 w-full max-w-6xl"
+            className="grid gap-6 w-full max-w-screen-xl"
             style={{
               gridTemplateColumns: `repeat(${
                 game.categories.filter((cat) => cat.round === currentRound)

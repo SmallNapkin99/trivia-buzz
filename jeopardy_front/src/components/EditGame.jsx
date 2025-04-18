@@ -81,7 +81,12 @@ const EditGame = () => {
         rounds: {},
       };
 
-      const questionValues = [100, 200, 300, 400, 500];
+      const questionsPerCategory =
+        game.questionTotal / game.rounds / game.categories.length;
+      const questionValues = [];
+      for (let i = 1; i <= questionsPerCategory; i++) {
+        questionValues.push(i * 100);
+      }
 
       // Group questions by round and category
       const questionsByCategoryAndRound = {};
@@ -519,10 +524,10 @@ const EditGame = () => {
       {gameStructure && gameStructure.rounds[currentRound] && (
         <div className="flex justify-center w-full">
           <div
-            className="grid gap-6 w-full max-w-6xl"
+            className="grid gap-6 w-full max-w-screen-xl"
             style={{
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", // This will make the columns adjust and fill the space evenly
-              justifyItems: "center", // Ensures the grid items are centered
+              gridTemplateColumns: `repeat(${gameStructure.rounds[currentRound].categories.length}, 1fr)`,
+              gridAutoRows: "auto",
             }}
           >
             {/* Category Titles */}
