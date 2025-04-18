@@ -161,6 +161,12 @@ const GameBoard = () => {
           });
         }
       };
+      //send ws message to get signify game start
+      socket.send(
+        JSON.stringify({
+          action: "start_game",
+        })
+      );
       //send ws message to get player list
       socket.send(
         JSON.stringify({

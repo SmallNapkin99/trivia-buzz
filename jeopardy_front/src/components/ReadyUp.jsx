@@ -8,6 +8,30 @@ const ReadyUp = () => {
   const { id: gameId } = useParams();
   const navigate = useNavigate();
   const [playerName, setPlayerName] = React.useState("");
+  const [gameInProgress, setGameInProgress] = React.useState(false);
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+    if (socket) {
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.action === "game_in_progress") {
+          setGameInProgress(data.gameInProgress);
+        }
+      };
+      socket.send(
+        JSON.stringify({
+          action: "check_game_in_progress",
+        })
+      );
+    }
+    return () => {
+      //clear listener on unmount
+      if (socket) {
+        socket.onmessage = null;
+      }
+    };
+  }, [socket]);
 
   const handleReadyUp = () => {
     if (socket && playerName) {
@@ -23,39 +47,43 @@ const ReadyUp = () => {
         localStorage.setItem("playerId", playerId);
       }
 
-      //Send the player info to the server
-      socket.send(
-        JSON.stringify({
-          action: "player_ready",
-          playerId: playerId,
-          playerName: playerName,
-        })
-      );
+      if (gameInProgress) {
+        //do not allow player to join if game is in progress
+        alert("The game is already in progress. You cannot join now");
+      } else {
+        //Send the player info to the server
+        socket.send(
+          JSON.stringify({
+            action: "player_ready",
+            playerId: playerId,
+            playerName: playerName,
+          })
+        );
+        console.log(`${playerName} is ready with ID: ${playerId}`);
 
-      console.log(`${playerName} is ready with ID: ${playerId}`);
+        // Trigger Fullscreen API before navigating to the Buzzer component
+        const requestFullscreen = () => {
+          const element = document.documentElement; // Full page
+          if (element.requestFullscreen) {
+            // Chrome
+            element.requestFullscreen();
+          } else if (element.mozRequestFullScreen) {
+            // Firefox
+            element.mozRequestFullScreen();
+          } else if (element.webkitRequestFullscreen) {
+            // Safari
+            element.webkitRequestFullscreen();
+          } else if (element.msRequestFullscreen) {
+            // IE/Edge
+            element.msRequestFullscreen();
+          }
+        };
 
-      // Trigger Fullscreen API before navigating to the Buzzer component
-      const requestFullscreen = () => {
-        const element = document.documentElement; // Full page
-        if (element.requestFullscreen) {
-          // Chrome
-          element.requestFullscreen();
-        } else if (element.mozRequestFullScreen) {
-          // Firefox
-          element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) {
-          // Safari
-          element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) {
-          // IE/Edge
-          element.msRequestFullscreen();
-        }
-      };
+        // Trigger fullscreen when the user clicks the "Ready Up" button
+        requestFullscreen();
 
-      // Trigger fullscreen when the user clicks the "Ready Up" button
-      requestFullscreen();
-
-      navigate(`/game/${gameId}/buzzer`, { state: { playerId } });
+        navigate(`/game/${gameId}/buzzer`, { state: { playerId } });
+      }
     }
   };
 

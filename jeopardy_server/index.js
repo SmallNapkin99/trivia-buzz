@@ -38,12 +38,14 @@ const wss = new WebSocketServer({ server });
 
 const players = new Map();
 const questionsAnswered = new Set();
+let gameInProgress = false;
 let buzzersActive = false;
 let firstPlayerToBuzz = null;
 const resetGame = () => {
   console.log("Resetting game. Clearing all player data...");
   players.clear();
   questionsAnswered.clear();
+  gameInProgress = false;
   firstPlayerToBuzz = null;
   buzzersActive = false;
 };
@@ -177,6 +179,18 @@ wss.on("connection", (ws) => {
           }
         });
       }
+    }
+
+    if (data.action === "check_game_in_progress") {
+      const gameInProgressMessage = JSON.stringify({
+        action: "game_in_progress",
+        gameInProgress: gameInProgress,
+      });
+      ws.send(gameInProgressMessage);
+    }
+
+    if (data.action === "start_game") {
+      gameInProgress = true;
     }
 
     if (data.action === "end_game") {
