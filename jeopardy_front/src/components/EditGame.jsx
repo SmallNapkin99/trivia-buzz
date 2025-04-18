@@ -81,8 +81,7 @@ const EditGame = () => {
         rounds: {},
       };
 
-      const questionsPerCategory =
-        game.questionTotal / game.rounds / game.categories.length;
+      const questionsPerCategory = game.questionTotal / game.categories.length;
       const questionValues = [];
       for (let i = 1; i <= questionsPerCategory; i++) {
         questionValues.push(i * 100);
