@@ -94,8 +94,13 @@ router.post("/update", upload.none(), async (req, res) => {
     const updateData = {
       question,
       answer,
-      ...(imageId ? { imageId: new ObjectId(imageId) } : {}),
     };
+
+    if (imageId === "null") {
+      updateData.imageId = null;
+    } else if (imageId) {
+      updateData.imageId = new ObjectId(imageId);
+    }
 
     const updatedQuestion = await Question.findOneAndUpdate(
       {

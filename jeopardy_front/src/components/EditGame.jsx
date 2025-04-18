@@ -8,8 +8,10 @@ import {
   TextField,
   Button,
   Typography,
+  Tooltip,
 } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import DeleteForever from "@mui/icons-material/DeleteForever";
 import { styled } from "@mui/material/styles";
 
 const VisuallyHiddenInput = styled("input")({
@@ -255,15 +257,7 @@ const EditGame = () => {
       const imageFormData = new FormData();
       if (imageFile) {
         if (questionDetail.imageId) {
-          const delete_res = await fetch(
-            `${process.env.REACT_APP_API_URL}/images/delete/${questionDetail.imageId}`,
-            {
-              method: "DELETE",
-            }
-          );
-          if (!delete_res.ok) {
-            throw new Error("Error deleting old image");
-          }
+          await handleDeleteImage(questionDetail.imageId);
         }
         imageFormData.append("file", imageFile);
         const upload_res = await fetch(
@@ -355,16 +349,7 @@ const EditGame = () => {
       if (imageFile) {
         const imageFormData = new FormData();
         if (categoryDetail.imageId) {
-          //delete old image
-          const delete_res = await fetch(
-            `${process.env.REACT_APP_API_URL}/images/delete/${categoryDetail.imageId}`,
-            {
-              method: "DELETE",
-            }
-          );
-          if (!delete_res.ok) {
-            throw new Error("Error deleting old image");
-          }
+          await handleDeleteImage(categoryDetail.imageId);
         }
         //upload new image
         imageFormData.append("file", imageFile);
@@ -447,6 +432,71 @@ const EditGame = () => {
     };
     if (file) {
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDeleteImage = async (imageId) => {
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/images/delete/${imageId}`, {
+        method: "DELETE",
+      });
+      setImageSrc(null);
+      setImageFile(null);
+      //update category or question to null the imageId
+      if (selectedCategory) {
+        setCategoryDetail((prev) => ({
+          ...prev,
+          imageId: null,
+        }));
+        //null out the imageId in the backend
+        const categoryFormData = new FormData();
+        const categoryUpdates = { ...categoryDetail, imageId: "null" };
+        const updatedCategoryIdx = game.categories.findIndex(
+          (cat) =>
+            cat.name === selectedCategory.name && cat.round === currentRound
+        );
+
+        categoryFormData.append("updatedCategoryIdx", updatedCategoryIdx);
+        categoryFormData.append(
+          "categoryUpdates",
+          JSON.stringify(categoryUpdates)
+        );
+        categoryFormData.append("round", currentRound);
+        categoryFormData.append("gameId", gameId);
+
+        await fetch(`${process.env.REACT_APP_API_URL}/games/${gameId}`, {
+          method: "PUT",
+          body: categoryFormData,
+        });
+      }
+      if (selectedQuestion) {
+        setQuestionDetail((prev) => ({
+          ...prev,
+          imageId: null,
+        }));
+        //null out the imageId in the backend
+        const questionFormData = new FormData();
+        questionFormData.append("question", questionDetail.question);
+        questionFormData.append("answer", questionDetail.answer);
+        questionFormData.append("gameId", questionDetail.gameId);
+        questionFormData.append("category", questionDetail.category);
+        questionFormData.append("value", questionDetail.value);
+        questionFormData.append("round", questionDetail.round);
+        questionFormData.append("imageId", "null");
+
+        await fetch(`${process.env.REACT_APP_API_URL}/questions/update`, {
+          method: "POST",
+          body: questionFormData,
+        });
+      }
+      //fetch game and set game state to run fetchQuestions
+      const game_res = await fetch(
+        `${process.env.REACT_APP_API_URL}/games/${gameId}`
+      );
+      const game_data = await game_res.json();
+      setGame(game_data);
+    } catch (err) {
+      console.error("Error deleting image:", err);
     }
   };
 
@@ -649,24 +699,36 @@ const EditGame = () => {
               variant="outlined"
               multiline
             />
-            {/* Image Input */}
-            <Button
-              className="w-full"
-              component="label"
-              role={undefined}
-              variant="contained"
-              color="secondary"
-              align="center"
-              tabIndex={-1}
-              startIcon={<FileUploadIcon />}
-            >
-              Image
-              <VisuallyHiddenInput
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageChange(e.target.files[0])}
-              />
-            </Button>
+            {/* Image Upload & Delete Buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                className="flex-grow"
+                component="label"
+                variant="contained"
+                color="secondary"
+                tabIndex={-1}
+                startIcon={<FileUploadIcon />}
+              >
+                Image
+                <VisuallyHiddenInput
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e.target.files[0])}
+                />
+              </Button>
+              <Tooltip title="Delete Image" arrow>
+                <span>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    disabled={!categoryDetail.imageId}
+                    onClick={() => handleDeleteImage(categoryDetail.imageId)}
+                  >
+                    <DeleteForever />
+                  </Button>
+                </span>
+              </Tooltip>
+            </div>
             {imageSrc && (
               <div
                 style={{
@@ -680,7 +742,6 @@ const EditGame = () => {
               >
                 <img
                   src={imageSrc}
-                  alt="category_image"
                   style={{
                     maxWidth: "50%",
                     maxHeight: "50%",
@@ -785,24 +846,36 @@ const EditGame = () => {
               variant="outlined"
               multiline
             />
-            {/* Image Upload */}
-            <Button
-              className="w-full"
-              component="label"
-              role={undefined}
-              variant="contained"
-              color="secondary"
-              align="center"
-              tabIndex={-1}
-              startIcon={<FileUploadIcon />}
-            >
-              Image
-              <VisuallyHiddenInput
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageChange(e.target.files[0])}
-              />
-            </Button>
+            {/* Image Upload & Delete Buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                className="flex-grow"
+                component="label"
+                variant="contained"
+                color="secondary"
+                tabIndex={-1}
+                startIcon={<FileUploadIcon />}
+              >
+                Image
+                <VisuallyHiddenInput
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e.target.files[0])}
+                />
+              </Button>
+              <Tooltip title="Delete Image" arrow>
+                <span>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    disabled={!questionDetail.imageId}
+                    onClick={() => handleDeleteImage(questionDetail.imageId)}
+                  >
+                    <DeleteForever />
+                  </Button>
+                </span>
+              </Tooltip>
+            </div>
             {imageSrc && (
               <div
                 style={{
@@ -816,7 +889,6 @@ const EditGame = () => {
               >
                 <img
                   src={imageSrc}
-                  alt="question_image"
                   style={{
                     maxWidth: "50%",
                     maxHeight: "50%",

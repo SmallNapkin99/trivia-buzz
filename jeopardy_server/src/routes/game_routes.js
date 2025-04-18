@@ -47,6 +47,10 @@ router.put("/:id", upload.none(), async (req, res) => {
       },
     };
 
+    if (parsedUpdates.imageId === "null") {
+      fullCategoryUpdate.sampleQuestion.imageId = null;
+    }
+
     const updatedGame = await Game.findByIdAndUpdate(
       gameId,
       { $set: { [`categories.${updatedCategoryIdx}`]: fullCategoryUpdate } },
