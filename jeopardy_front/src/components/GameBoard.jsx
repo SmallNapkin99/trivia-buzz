@@ -225,6 +225,7 @@ const GameBoard = () => {
       );
     }
     //navigate to podium
+    navigate(`/game/${gameId}/podium`, { state: { players } });
   };
 
   const handleCategoryClick = (category) => {

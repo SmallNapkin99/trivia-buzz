@@ -9,6 +9,7 @@ import ReadyUp from "./components/ReadyUp";
 import PlayerList from "./components/PlayerList";
 import Buzzer from "./components/Buzzer";
 import GameBoard from "./components/GameBoard";
+import Podium from "./components/Podium";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
               <Route path="playerlist" element={<PlayerList />} />
               <Route path="buzzer" element={<Buzzer />} />
               <Route path="gameboard" element={<GameBoard />} />
+              <Route path="podium" element={<Podium />} />
             </Routes>
           </WebSocketProvider>
         }
