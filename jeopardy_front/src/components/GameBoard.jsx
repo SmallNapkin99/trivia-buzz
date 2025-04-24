@@ -254,7 +254,10 @@ const GameBoard = () => {
 
   const handleAnswerQuestion = (questionId) => {
     const roundQuestions = questions.filter((q) => q.round === currentRound);
-    if (roundQuestions.length === answeredQuestions.length + 1 / currentRound) {
+    if (
+      roundQuestions.length ===
+      (answeredQuestions.length + 1) / currentRound
+    ) {
       if (currentRound === game.rounds) {
         handleEndGame();
       } else {
