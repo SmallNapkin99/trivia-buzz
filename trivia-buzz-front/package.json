@@ -1,5 +1,5 @@
 {
-  "name": "jeopardy_front",
+  "name": "trivia-buzz-front",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

@@ -6,11 +6,11 @@
         "type": "node",
         "request": "launch",
         "skipFiles": ["<node_internals>/**"],
-        "program": "${workspaceFolder}/jeopardy_server/index.js",
+        "program": "${workspaceFolder}/trivia-buzz-server/index.js",
         "env": {
           "NODE_ENV": "development"
         },
-        "envFile": "${workspaceFolder}/jeopardy_server/.env"
+        "envFile": "${workspaceFolder}/trivia-buzz-server/.env"
       }
     ]
 }
