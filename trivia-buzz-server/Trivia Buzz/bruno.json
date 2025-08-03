@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "Jeopardy",
+  "name": "Trivia Buzz",
   "type": "collection",
   "ignore": [
     "node_modules",
