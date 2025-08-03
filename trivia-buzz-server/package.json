@@ -1,7 +1,7 @@
 {
-  "name": "jeopardy_server",
+  "name": "trivia-buzz-server",
   "version": "1.0.0",
-  "description": "Node server backend for Jeopardy game",
+  "description": "Node server backend for Trivia Buzz game",
   "main": "index.js",
   "type": "module",
   "scripts": {

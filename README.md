@@ -1,3 +1,3 @@
-# jeopardy
+# trivia-buzz
 
-Jeopardy for free 😁
+Trivia Buzz is the custom game show for you and your friends!
