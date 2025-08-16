@@ -7,22 +7,6 @@ const CreateGame = () => {
   const [categoriesPerRound, setCategoriesPerRound] = React.useState(5);
   const [questionsPerCategory, setQuestionsPerCategory] = React.useState(5);
   const [rounds, setRounds] = React.useState(2);
-  const [categories, setCategories] = React.useState({
-    0: [
-      { name: "", description: "", round: 1 },
-      { name: "", description: "", round: 1 },
-      { name: "", description: "", round: 1 },
-      { name: "", description: "", round: 1 },
-      { name: "", description: "", round: 1 },
-    ],
-    1: [
-      { name: "", description: "", round: 2 },
-      { name: "", description: "", round: 2 },
-      { name: "", description: "", round: 2 },
-      { name: "", description: "", round: 2 },
-      { name: "", description: "", round: 2 },
-    ],
-  });
   const [showNotification, setShowNotification] = React.useState(false);
   const navigate = useNavigate();
 
@@ -42,187 +26,211 @@ const CreateGame = () => {
           navigate(`/game/${data._id}/edit`);
         }, 1500);
       })
-
       .catch((error) => {
         console.error("Error creating game:", error);
       });
   };
 
-  const handleRoundsChange = (value) => {
-    if (value > rounds) {
-      const newCategories = [];
+  // Create categories structure for API
+  const createCategoriesStructure = () => {
+    const categories = [];
+    for (let round = 1; round <= rounds; round++) {
       for (let i = 0; i < categoriesPerRound; i++) {
-        newCategories.push({ name: "", description: "", round: value });
+        categories.push({
+          name: `Category ${i + 1}`,
+          description: "",
+          round: round,
+        });
       }
-      setCategories((prevCategories) => ({
-        ...prevCategories,
-        [value - 1]: newCategories,
-      }));
-    } else if (value < rounds) {
-      setCategories((prevCategories) => {
-        const newCategories = { ...prevCategories };
-        delete newCategories[value];
-        return newCategories;
-      });
     }
-    setRounds(value);
+    return categories;
   };
 
-  const handleCategoriesPerRoundChange = (value) => {
-    setCategories((prevCategories) => {
-      const newCategories = { ...prevCategories };
-      if (value > categoriesPerRound) {
-        for (let key in newCategories) {
-          for (let i = 0; i < value - newCategories[key].length; i++) {
-            newCategories[key].push({
-              name: "",
-              description: "",
-              round: Number(key),
-            });
-          }
-        }
-      } else if (value < categoriesPerRound) {
-        for (let key in categories) {
-          newCategories[key].splice(value);
-        }
-      }
-      return newCategories;
-    });
-    setCategoriesPerRound(value);
-  };
-
-  const handleCategoryChange = (roundIndex, categoryIndex, field, value) => {
-    setCategories((prevCategories) => {
-      const newCategories = { ...prevCategories };
-      newCategories[roundIndex][categoryIndex][field] = value;
-      return newCategories;
-    });
-  };
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen h-full w-full overflow-y-auto space-y-12 p-8">
-      <h1 className="font-sans font-extrabold text-6xl text-shadows">
-        Create Game
-      </h1>
-      {/* Input Row */}
-      <div className="flex flex-row justify-between w-full max-w-5xl space-x-8">
-        <div className="flex flex-col items-center w-1/4">
-          <label className="font-medium text-yellow-500 text-lg text-center mb-2">
+    <div className="flex flex-col items-center space-y-6 py-12">
+      {/* Header */}
+      <div className="text-center">
+        <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-4">
+          CREATE GAME
+        </h1>
+        <p className="text-xl text-white opacity-80 font-light">
+          Customize your game!
+        </p>
+      </div>
+
+      {/* Game Configuration Card */}
+      <div className="w-full max-w-4xl bg-black bg-opacity-40 backdrop-blur-lg rounded-3xl border border-white border-opacity-20 shadow-2xl p-8">
+        {/* Game Name */}
+        <div className="mb-8">
+          <label className="block text-white text-lg font-semibold mb-3 text-center">
             Game Name
           </label>
           <input
             type="text"
-            placeholder="Enter name"
+            placeholder="Enter your game name..."
             value={gameName}
             onChange={(e) => setGameName(e.target.value)}
-            className="p-4 text-xl text-center w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-4 text-xl text-center bg-white bg-opacity-10 backdrop-blur-sm border border-white border-opacity-30 rounded-2xl text-white placeholder-white placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300"
           />
         </div>
-        <div className="flex flex-col items-center w-1/4">
-          <label className="font-medium text-yellow-500 text-lg text-center mb-2">
-            Rounds
-          </label>
-          <input
-            type="number"
-            value={rounds}
-            step={1}
-            onChange={(e) => handleRoundsChange(Number(e.target.value))}
-            className="p-4 text-xl text-center w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div className="flex flex-col items-center w-1/4">
-          <label className="font-medium text-yellow-500 text-lg text-center mb-2">
-            Categories per Round
-          </label>
-          <input
-            type="number"
-            value={categoriesPerRound}
-            step={1}
-            onChange={(e) =>
-              handleCategoriesPerRoundChange(Number(e.target.value))
-            }
-            className="p-4 text-xl text-center w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div className="flex flex-col items-center w-1/4">
-          <label className="font-medium text-yellow-500 text-lg text-center mb-2">
-            Questions per Category
-          </label>
-          <input
-            type="number"
-            value={questionsPerCategory}
-            onChange={(e) => setQuestionsPerCategory(Number(e.target.value))}
-            className="p-4 text-xl text-center w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-      </div>
-      {/* Rounds and Categories */}
-      {Array.from({ length: rounds }).map((_, roundIndex) => (
-        <div key={roundIndex} className="w-full max-w-5xl space-y-4">
-          {/* Round Title */}
-          <h2 className="text-2xl font-bold text-center text-yellow-500">
-            Round {roundIndex + 1} Categories
-          </h2>
-          {/* Categories Row */}
-          <div className="flex flex-row justify-between space-x-4">
-            {Array.from({ length: categoriesPerRound }).map(
-              (_, categoryIndex) => (
-                <div
-                  key={categoryIndex}
-                  className="flex flex-col items-center w-1/5"
-                >
-                  <input
-                    type="text"
-                    placeholder={`Category Name`}
-                    value={categories[roundIndex]?.[categoryIndex]?.name || ""}
-                    onChange={(e) =>
-                      handleCategoryChange(
-                        roundIndex,
-                        categoryIndex,
-                        "name",
-                        e.target.value
-                      )
-                    }
-                    className="p-2 text-lg text-center w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="text"
-                    placeholder={`Category Description`}
-                    value={
-                      categories[roundIndex]?.[categoryIndex]?.description || ""
-                    }
-                    onChange={(e) =>
-                      handleCategoryChange(
-                        roundIndex,
-                        categoryIndex,
-                        "description",
-                        e.target.value
-                      )
-                    }
-                    className="mt-2 p-2 text-lg text-center w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              )
-            )}
+
+        {/* Configuration Grid */}
+        <div className="flex flex-col gap-6">
+          {/* Rounds */}
+          <div className="group w-full">
+            <label className="block text-white text-lg font-semibold mb-4 text-center group-hover:text-yellow-300 transition-colors duration-300">
+              Rounds
+            </label>
+            <div className="relative bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-600 rounded-2xl p-6 shadow-xl">
+              <div className="flex justify-center space-x-2">
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <button
+                    key={value}
+                    onClick={() => setRounds(value)}
+                    className={`w-12 h-12 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-110 ${
+                      rounds === value
+                        ? "bg-white text-purple-600 shadow-lg scale-105"
+                        : "bg-white bg-opacity-20 text-white hover:bg-opacity-30"
+                    }`}
+                  >
+                    {value}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Categories per Round */}
+          <div className="group w-full">
+            <label className="block text-white text-lg font-semibold mb-4 text-center group-hover:text-yellow-300 transition-colors duration-300">
+              Categories per Round
+            </label>
+            <div className="relative bg-gradient-to-br from-emerald-500 via-teal-600 to-blue-600 rounded-2xl p-6 shadow-xl">
+              <div className="flex justify-center space-x-2 flex-wrap gap-y-2">
+                {[3, 4, 5, 6, 7, 8].map((value) => (
+                  <button
+                    key={value}
+                    onClick={() => setCategoriesPerRound(value)}
+                    className={`w-12 h-12 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-110 ${
+                      categoriesPerRound === value
+                        ? "bg-white text-teal-600 shadow-lg scale-105"
+                        : "bg-white bg-opacity-20 text-white hover:bg-opacity-30"
+                    }`}
+                  >
+                    {value}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Questions per Category */}
+          <div className="group w-full">
+            <label className="block text-white text-lg font-semibold mb-4 text-center group-hover:text-yellow-300 transition-colors duration-300">
+              Questions per Category
+            </label>
+            <div className="relative bg-gradient-to-br from-rose-400 via-pink-400 to-purple-500 rounded-2xl p-6 shadow-xl">
+              <div className="flex justify-center space-x-2 flex-wrap gap-y-2">
+                {[3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                  <button
+                    key={value}
+                    onClick={() => setQuestionsPerCategory(value)}
+                    className={`w-12 h-12 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-110 ${
+                      questionsPerCategory === value
+                        ? "bg-white text-pink-600 shadow-lg scale-105"
+                        : "bg-white bg-opacity-20 text-white hover:bg-opacity-30"
+                    }`}
+                  >
+                    {value}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      ))}
-      <div className="flex justify-center">
+
+        {/* Game Summary */}
+        <div className="mt-8 p-6 bg-gradient-to-br from-yellow-300 via-amber-300 to-orange-200 rounded-2xl shadow-xl">
+          <h3 className="text-xl font-black text-gray-800 text-center mb-2">
+            Game Summary
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div>
+              <div className="text-2xl font-black text-gray-800">{rounds}</div>
+              <div className="text-sm font-semibold text-amber-800 opacity-90">
+                Rounds
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl font-black text-gray-800">
+                {categoriesPerRound * rounds}
+              </div>
+              <div className="text-sm font-semibold text-amber-800 opacity-90">
+                Total Categories
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl font-black text-gray-800">
+                {questionsPerCategory * categoriesPerRound * rounds}
+              </div>
+              <div className="text-sm font-semibold text-amber-800 opacity-90">
+                Total Questions
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl font-black text-gray-800">
+                ~
+                {Math.round(
+                  (questionsPerCategory * categoriesPerRound * rounds) / 2
+                )}
+              </div>
+              <div className="text-sm font-semibold text-amber-800 opacity-90">
+                Minutes
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Create Button */}
+      <div className="relative group">
         <BigButton
           text="Create Game"
           onClick={() =>
             createGame({
               name: gameName,
               questionTotal: questionsPerCategory * categoriesPerRound * rounds,
-              categories: Object.values(categories).flat(),
+              categories: createCategoriesStructure(),
               rounds: rounds,
             })
           }
+          disabled={!gameName.trim()}
         />
       </div>
 
+      {/* Success Notification */}
       {showNotification && (
-        <div className="absolute top-12 left-1/2 transform -translate-x-1/2 bg-green-500 text-white p-4 rounded-md shadow-lg">
-          <p>Game created</p>
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-2xl shadow-2xl border border-green-400 animate-bounce">
+            <div className="flex items-center space-x-3">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+              <span className="text-lg font-bold">
+                Game Created Successfully!
+              </span>
+            </div>
+          </div>
         </div>
       )}
     </div>
