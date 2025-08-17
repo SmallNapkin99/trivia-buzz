@@ -49,7 +49,7 @@ const GameAction = () => {
     <div className="flex flex-col items-center justify-center min-h-screen">
       {game && (
         <div className="flex flex-col items-center justify-center min-h-screen space-y-8">
-          <h1 className="font-sans font-extrabold text-6xl text-shadows">
+          <h1 className="text-8xl md:text-9xl lg:text-[8rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 drop-shadow-2xl">
             {game.name}
           </h1>
           <ul className="space-y-8">
