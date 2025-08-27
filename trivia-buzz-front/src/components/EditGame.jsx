@@ -723,21 +723,19 @@ const EditGame = () => {
                   setCategoryDetail({ ...categoryDetail, name: e.target.value })
                 }
                 label="Category Name"
-                variant="outlined"
+                variant="standard"
                 multiline
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "white",
-                    borderRadius: "12px",
-                    "&:hover fieldset": {
-                      borderColor: "rgb(147, 51, 234)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "rgb(147, 51, 234)",
-                    },
+                  "& .MuiInputLabel-root": {
+                    color: "rgb(245, 158, 11)",
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "rgb(147, 51, 234)",
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+
+                  // Focused underline
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
                 }}
               />
@@ -753,21 +751,19 @@ const EditGame = () => {
                   })
                 }
                 label="Category Description"
-                variant="outlined"
+                variant="standard"
                 multiline
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "white",
-                    borderRadius: "12px",
-                    "&:hover fieldset": {
-                      borderColor: "rgb(147, 51, 234)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "rgb(147, 51, 234)",
-                    },
+                  "& .MuiInputLabel-root": {
+                    color: "rgb(245, 158, 11)",
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "rgb(147, 51, 234)",
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+
+                  // Focused underline
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
                 }}
               />
@@ -783,21 +779,19 @@ const EditGame = () => {
                   })
                 }
                 label="Sample Question"
-                variant="outlined"
+                variant="standard"
                 multiline
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "white",
-                    borderRadius: "12px",
-                    "&:hover fieldset": {
-                      borderColor: "rgb(147, 51, 234)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "rgb(147, 51, 234)",
-                    },
+                  "& .MuiInputLabel-root": {
+                    color: "rgb(245, 158, 11)",
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "rgb(147, 51, 234)",
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+
+                  // Focused underline
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
                 }}
               />
@@ -813,21 +807,19 @@ const EditGame = () => {
                   })
                 }
                 label="Sample Answer"
-                variant="outlined"
+                variant="standard"
                 multiline
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "white",
-                    borderRadius: "12px",
-                    "&:hover fieldset": {
-                      borderColor: "rgb(147, 51, 234)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "rgb(147, 51, 234)",
-                    },
+                  "& .MuiInputLabel-root": {
+                    color: "rgb(245, 158, 11)",
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "rgb(147, 51, 234)",
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+
+                  // Focused underline
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
                 }}
               />
@@ -917,10 +909,9 @@ const EditGame = () => {
                     width: "100%",
                     height: "100%",
                     overflow: "auto",
-                    backgroundColor: "white",
+                    backgroundColor: "transparent",
                     borderRadius: "12px",
                     padding: "16px",
-                    boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
                   }}
                 >
                   <img
@@ -957,6 +948,7 @@ const EditGame = () => {
                 fontWeight: "500",
                 textTransform: "none",
                 "&:hover": {
+                  color: "rgb(234, 179, 8)",
                   borderColor: "rgb(245, 158, 11)",
                   backgroundColor: "rgba(250, 204, 21, 0.04)",
                 },
@@ -1060,24 +1052,19 @@ const EditGame = () => {
                   })
                 }
                 label="Question"
-                variant="outlined"
+                variant="standard"
                 multiline
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "white",
-                    borderRadius: "12px",
-                    "&:hover fieldset": {
-                      borderColor: "rgb(250, 204, 21)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "rgb(250, 204, 21)",
-                    },
-                  },
                   "& .MuiInputLabel-root": {
-                    color: "rgb(234, 179, 8)", // yellow-500 color
+                    color: "rgb(245, 158, 11)",
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "rgb(245, 158, 11)",
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+
+                  // Focused underline
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
                 }}
               />
@@ -1093,21 +1080,19 @@ const EditGame = () => {
                   })
                 }
                 label="Answer"
-                variant="outlined"
+                variant="standard"
                 multiline
                 sx={{
-                  "& .MuiOutlinedInput-root": {
-                    backgroundColor: "white",
-                    borderRadius: "12px",
-                    "&:hover fieldset": {
-                      borderColor: "rgb(250, 204, 21)",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "rgb(250, 204, 21)",
-                    },
+                  "& .MuiInputLabel-root": {
+                    color: "rgb(245, 158, 11)",
                   },
                   "& .MuiInputLabel-root.Mui-focused": {
-                    color: "rgb(245, 158, 11)",
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+
+                  // Focused underline
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
                 }}
               />
@@ -1197,10 +1182,9 @@ const EditGame = () => {
                     width: "100%",
                     height: "100%",
                     overflow: "auto",
-                    backgroundColor: "white",
+                    backgroundColor: "transparent",
                     borderRadius: "12px",
                     padding: "16px",
-                    boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
                   }}
                 >
                   <img
@@ -1237,6 +1221,7 @@ const EditGame = () => {
                 fontWeight: "500",
                 textTransform: "none",
                 "&:hover": {
+                  color: "rgb(234, 179, 8)",
                   borderColor: "rgb(245, 158, 11)",
                   backgroundColor: "rgba(250, 204, 21, 0.04)",
                 },
