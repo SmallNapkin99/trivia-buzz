@@ -563,18 +563,28 @@ const EditGame = () => {
 
         {/* Round Navigation */}
         {gameStructure && (
-          <div className="flex items-center gap-4 flex-row">
+          <div className="flex items-center gap-6 flex-row mt-4">
             <button
-              className="text-yellow-500 px-4 py-2 flex items-center justify-center font-sans hover:text-yellow-300"
+              className="text-purple-900 px-4 py-2 flex items-center justify-center font-bold text-xl
+                         bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 
+                         rounded-xl
+                         hover:bg-gradient-to-br hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-500
+                         cursor-pointer transition-all duration-300 transform hover:scale-105 hover:-translate-y-1
+                         active:scale-95 active:translate-y-0"
               onClick={() => handleRoundChange(-1)}
             >
               ◀
             </button>
-            <h2 className="text-2xl font-bold text-yellow-500">
+            <h2 className="text-3xl font-bold text-yellow-400">
               Round {currentRound}
             </h2>
             <button
-              className="text-yellow-500 px-4 py-2 flex items-center justify-center font-sans hover:text-yellow-400"
+              className="text-purple-900 px-4 py-2 flex items-center justify-center font-bold text-xl
+                         bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 
+                         rounded-xl
+                         hover:bg-gradient-to-br hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-500
+                         cursor-pointer transition-all duration-300 transform hover:scale-105 hover:-translate-y-1
+                         active:scale-95 active:translate-y-0"
               onClick={() => handleRoundChange(1)}
             >
               ▶
@@ -586,7 +596,7 @@ const EditGame = () => {
         {gameStructure && gameStructure.rounds[currentRound] && (
           <div className="flex justify-center w-full">
             <div
-              className="grid gap-6 w-full max-w-screen-xl"
+              className="grid gap-4 w-full max-w-screen-xl"
               style={{
                 gridTemplateColumns: `repeat(${gameStructure.rounds[currentRound].categories.length}, 1fr)`,
                 gridAutoRows: "auto",
@@ -597,8 +607,14 @@ const EditGame = () => {
                 (category, idx) => (
                   <div key={idx} className="flex flex-col items-center w-full">
                     <h3
-                      className="text-lg font-bold text-center text-yellow-400 border border-yellow-400 p-3 rounded-md w-full hover:bg-purple-700 cursor-pointer transition 
-                    flex items-center justify-center h-full"
+                      className="text-lg font-medium text-center text-white 
+                               bg-gradient-to-br from-purple-600 to-pink-600 
+                               p-4 rounded-xl w-full 
+                               shadow-lg 
+                               hover:from-purple-500 hover:to-pink-500 hover:shadow-xl
+                               cursor-pointer transition-all duration-200 hover:scale-[1.02]
+                               flex items-center justify-center h-full min-h-[4rem]
+                               font-sans"
                       onClick={() => openCategoryDialog(category, currentRound)}
                     >
                       {category.name}
@@ -608,23 +624,39 @@ const EditGame = () => {
               )}
 
               {/* Single Full-Width Line */}
-              <div className="col-span-full border-t-2 border-yellow-400 w-full mt-2 mb-4" />
+              <div
+                className="col-span-full h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 
+                            w-full mt-4 mb-6 shadow-sm"
+              />
 
               {/* Questions */}
               {gameStructure.rounds[currentRound].categories.map(
                 (category, idx) => (
                   <div key={idx} className="flex flex-col items-center w-full">
-                    <div className="space-y-4 w-full">
+                    <div className="space-y-3 w-full">
                       {category.questions.map((question, qIdx) => (
                         <div
                           key={qIdx}
-                          className="w-full text-center p-6 bg-yellow-500 text-purple-700 font-bold rounded-lg hover:bg-yellow-300 cursor-pointer transition"
+                          className="w-full text-center p-6 
+                                   bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 
+                                   text-purple-900 font-bold rounded-xl 
+                                   border-2 border-yellow-600
+                                   hover:bg-gradient-to-br hover:from-yellow-300 hover:via-yellow-400 hover:to-yellow-500
+                                hover:border-yellow-500
+                                   cursor-pointer transition-all duration-300 transform hover:scale-105 hover:-translate-y-1
+                                   active:scale-95 active:translate-y-0
+                                   h-32 flex flex-col justify-center"
                           onClick={() =>
                             openQuestionDialog(question, category, currentRound)
                           }
                         >
-                          <h4 className="text-xl">{`${question.value}`}</h4>
-                          <p className="text-sm opacity-70 overflow-hidden line-clamp-2 min-h-[2.5rem]">
+                          <h4 className="text-2xl font-black tracking-wider drop-shadow-sm">
+                            {question.value}
+                          </h4>
+                          <p
+                            className="text-sm opacity-80 overflow-hidden font-semibold mt-2 leading-tight
+                                      line-clamp-2"
+                          >
                             {question.question || "No question available"}
                           </p>
                         </div>
@@ -638,12 +670,36 @@ const EditGame = () => {
         )}
 
         {/* Dialog for Editing Category */}
-        <Dialog open={!!selectedCategory} onClose={closeCategoryDialog}>
-          <DialogTitle className="bg-yellow-500 text-purple-700">
+        <Dialog
+          open={!!selectedCategory}
+          onClose={closeCategoryDialog}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            "& .MuiDialog-paper": {
+              borderRadius: "16px",
+            },
+          }}
+        >
+          <DialogTitle
+            variant="h5"
+            className="text-white text-center font-semibold"
+            sx={{
+              background:
+                "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+              color: "rgb(88, 28, 135)",
+              fontWeight: "600",
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+              padding: "1.5rem",
+              fontSize: "1.5rem",
+            }}
+          >
             Edit Category
           </DialogTitle>
           <DialogContent
-            className="max-w-md bg-yellow-500"
+            className="max-w-md"
             sx={{
               width: "100%",
               height: "100%",
@@ -652,9 +708,12 @@ const EditGame = () => {
               flexDirection: "column",
               justifyContent: "flex-start",
               overflowY: "auto",
+              background:
+                "linear-gradient(90deg, rgb(147, 51, 234) 0%, rgb(219, 39, 119) 100%)",
+              padding: "1.5rem 1.5rem 0.75rem 1.5rem",
             }}
           >
-            <div className="space-y-4 text-purple-700">
+            <div className="space-y-4 mt-6">
               <TextField
                 color="secondary"
                 margin="dense"
@@ -666,6 +725,21 @@ const EditGame = () => {
                 label="Category Name"
                 variant="outlined"
                 multiline
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    "&:hover fieldset": {
+                      borderColor: "rgb(147, 51, 234)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgb(147, 51, 234)",
+                    },
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "rgb(147, 51, 234)",
+                  },
+                }}
               />
               <TextField
                 color="secondary"
@@ -681,6 +755,21 @@ const EditGame = () => {
                 label="Category Description"
                 variant="outlined"
                 multiline
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    "&:hover fieldset": {
+                      borderColor: "rgb(147, 51, 234)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgb(147, 51, 234)",
+                    },
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "rgb(147, 51, 234)",
+                  },
+                }}
               />
               <TextField
                 color="secondary"
@@ -696,6 +785,21 @@ const EditGame = () => {
                 label="Sample Question"
                 variant="outlined"
                 multiline
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    "&:hover fieldset": {
+                      borderColor: "rgb(147, 51, 234)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgb(147, 51, 234)",
+                    },
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "rgb(147, 51, 234)",
+                  },
+                }}
               />
               <TextField
                 color="secondary"
@@ -711,16 +815,47 @@ const EditGame = () => {
                 label="Sample Answer"
                 variant="outlined"
                 multiline
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    "&:hover fieldset": {
+                      borderColor: "rgb(147, 51, 234)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgb(147, 51, 234)",
+                    },
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "rgb(147, 51, 234)",
+                  },
+                }}
               />
               {/* Image Upload & Delete Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Button
                   className="flex-grow"
                   component="label"
                   variant="contained"
-                  color="secondary"
                   tabIndex={-1}
                   startIcon={<FileUploadIcon />}
+                  sx={{
+                    background:
+                      "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+                    color: "rgb(88, 28, 135)",
+                    fontWeight: "600",
+                    borderRadius: "12px",
+                    padding: "12px 20px",
+                    textTransform: "none",
+                    boxShadow: "0 4px 14px 0 rgba(250, 204, 21, 0.3)",
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg, rgb(254, 240, 138) 0%, rgb(250, 204, 21) 100%)",
+                      boxShadow: "0 6px 20px 0 rgba(250, 204, 21, 0.4)",
+                      transform: "translateY(-1px)",
+                    },
+                    transition: "all 0.2s ease",
+                  }}
                 >
                   Image
                   <VisuallyHiddenInput
@@ -733,9 +868,40 @@ const EditGame = () => {
                   <span>
                     <Button
                       variant="contained"
-                      color="secondary"
                       disabled={!categoryDetail.imageId}
                       onClick={() => handleDeleteImage(categoryDetail.imageId)}
+                      sx={{
+                        background: categoryDetail.imageId
+                          ? "linear-gradient(135deg, rgb(239, 68, 68) 0%, rgb(220, 38, 38) 100%)"
+                          : "rgb(156, 163, 175)",
+                        color: "white",
+                        minWidth: "48px",
+                        height: "48px",
+                        borderRadius: "12px",
+                        border: categoryDetail.imageId
+                          ? "2px solid rgb(153, 27, 27)"
+                          : "none",
+                        boxShadow: categoryDetail.imageId
+                          ? "0 4px 14px 0 rgba(239, 68, 68, 0.3)"
+                          : "none",
+                        "&:hover": {
+                          background: categoryDetail.imageId
+                            ? "linear-gradient(135deg, rgb(248, 113, 113) 0%, rgb(239, 68, 68) 100%)"
+                            : "rgb(156, 163, 175)",
+                          border: categoryDetail.imageId
+                            ? "2px solid rgb(127, 29, 29)"
+                            : "none",
+                          transform: categoryDetail.imageId
+                            ? "translateY(-1px)"
+                            : "none",
+                        },
+                        "&:disabled": {
+                          background: "rgb(156, 163, 175)",
+                          color: "rgb(107, 114, 128)",
+                          border: "none",
+                        },
+                        transition: "all 0.2s ease",
+                      }}
                     >
                       <DeleteForever />
                     </Button>
@@ -751,6 +917,10 @@ const EditGame = () => {
                     width: "100%",
                     height: "100%",
                     overflow: "auto",
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    padding: "16px",
+                    boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
                   }}
                 >
                   <img
@@ -760,6 +930,7 @@ const EditGame = () => {
                       maxHeight: "50%",
                       objectFit: "contain",
                       cursor: "zoom-in",
+                      borderRadius: "8px",
                     }}
                     onClick={() => handleImageClick(imageSrc)}
                   />
@@ -767,50 +938,91 @@ const EditGame = () => {
               )}
             </div>
           </DialogContent>
-          <DialogActions className="bg-yellow-500">
+          <DialogActions
+            sx={{
+              background:
+                "linear-gradient(90deg, rgb(147, 51, 234) 0%, rgb(219, 39, 119) 100%)",
+              padding: "0.75rem 1.5rem 1.5rem",
+              gap: "12px",
+            }}
+          >
             <Button
               variant="outlined"
-              color="secondary"
               onClick={closeCategoryDialog}
+              sx={{
+                borderColor: "rgb(250, 204, 21)",
+                color: "rgb(250, 204, 21)",
+                borderRadius: "12px",
+                padding: "10px 24px",
+                fontWeight: "500",
+                textTransform: "none",
+                "&:hover": {
+                  borderColor: "rgb(245, 158, 11)",
+                  backgroundColor: "rgba(250, 204, 21, 0.04)",
+                },
+              }}
             >
               Cancel
             </Button>
             <Button
               variant="contained"
-              color="secondary"
               onClick={handleCategorySave}
+              sx={{
+                background:
+                  "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+                color: "rgb(88, 28, 135)",
+                borderRadius: "12px",
+                padding: "10px 24px",
+                fontWeight: "600",
+                textTransform: "none",
+                boxShadow: "0 4px 14px 0 rgba(250, 204, 21, 0.3)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, rgb(254, 240, 138) 0%, rgb(250, 204, 21) 100%)",
+                  boxShadow: "0 6px 20px 0 rgba(250, 204, 21, 0.4)",
+                  transform: "translateY(-1px)",
+                },
+                transition: "all 0.2s ease",
+              }}
             >
               Save
             </Button>
           </DialogActions>
         </Dialog>
+
         {/* Dialog for Editing Questions */}
         <Dialog
           open={!!selectedQuestion}
           onClose={closeQuestionDialog}
           fullWidth
           maxWidth="xs"
-          sx={{ display: "flex", flexDirection: "column", height: "100%" }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            "& .MuiDialog-paper": {
+              borderRadius: "16px",
+            },
+          }}
         >
           <DialogTitle
             variant="h5"
-            className="bg-yellow-500 text-purple-700 text-center"
+            className="text-white text-center font-semibold"
             sx={{
-              fontWeight: "medium",
+              background:
+                "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+              color: "rgb(88, 28, 135)",
+              fontWeight: "600",
               wordBreak: "break-word",
               whiteSpace: "normal",
+              padding: "1.5rem",
+              fontSize: "1.5rem",
             }}
           >
             {questionDetail.category}
           </DialogTitle>
-
-          {/* Horizontal Line */}
-          <div className="bg-yellow-500">
-            <hr className="border-t-2 border-purple-700 my-4 mx-6" />
-          </div>
-
           <DialogContent
-            className="max-w-md bg-yellow-500 w-full flex"
+            className="max-w-md w-full flex"
             sx={{
               width: "100%",
               height: "100%",
@@ -819,13 +1031,20 @@ const EditGame = () => {
               flexDirection: "column",
               justifyContent: "flex-start",
               overflowY: "auto",
+              background:
+                "linear-gradient(90deg, rgb(147, 51, 234) 0%, rgb(219, 39, 119) 100%)",
+              padding: "1.5rem 1.5rem 0.75rem 1.5rem",
             }}
           >
-            <div className="space-y-4 text-purple-700">
+            <div className="space-y-4 mt-6">
               <Typography
                 variant="h5"
-                className="text-center"
-                sx={{ fontWeight: "medium" }}
+                className="text-center font-semibold"
+                sx={{
+                  fontWeight: "600",
+                  color: "rgb(250, 204, 21)",
+                  fontSize: "1.75rem",
+                }}
               >
                 {questionDetail.value}
               </Typography>
@@ -843,6 +1062,24 @@ const EditGame = () => {
                 label="Question"
                 variant="outlined"
                 multiline
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    "&:hover fieldset": {
+                      borderColor: "rgb(250, 204, 21)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgb(250, 204, 21)",
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "rgb(245, 158, 11)",
+                  },
+                }}
               />
               <TextField
                 color="secondary"
@@ -858,16 +1095,47 @@ const EditGame = () => {
                 label="Answer"
                 variant="outlined"
                 multiline
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    "&:hover fieldset": {
+                      borderColor: "rgb(250, 204, 21)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "rgb(250, 204, 21)",
+                    },
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "rgb(245, 158, 11)",
+                  },
+                }}
               />
               {/* Image Upload & Delete Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Button
                   className="flex-grow"
                   component="label"
                   variant="contained"
-                  color="secondary"
                   tabIndex={-1}
                   startIcon={<FileUploadIcon />}
+                  sx={{
+                    background:
+                      "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+                    color: "rgb(88, 28, 135)",
+                    fontWeight: "600",
+                    borderRadius: "12px",
+                    padding: "12px 20px",
+                    textTransform: "none",
+                    boxShadow: "0 4px 14px 0 rgba(250, 204, 21, 0.3)",
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg, rgb(254, 240, 138) 0%, rgb(250, 204, 21) 100%)",
+                      boxShadow: "0 6px 20px 0 rgba(250, 204, 21, 0.4)",
+                      transform: "translateY(-1px)",
+                    },
+                    transition: "all 0.2s ease",
+                  }}
                 >
                   Image
                   <VisuallyHiddenInput
@@ -880,9 +1148,40 @@ const EditGame = () => {
                   <span>
                     <Button
                       variant="contained"
-                      color="secondary"
                       disabled={!questionDetail.imageId}
                       onClick={() => handleDeleteImage(questionDetail.imageId)}
+                      sx={{
+                        background: categoryDetail.imageId
+                          ? "linear-gradient(135deg, rgb(239, 68, 68) 0%, rgb(220, 38, 38) 100%)"
+                          : "rgb(156, 163, 175)",
+                        color: "white",
+                        minWidth: "48px",
+                        height: "48px",
+                        borderRadius: "12px",
+                        border: categoryDetail.imageId
+                          ? "2px solid rgb(153, 27, 27)"
+                          : "none",
+                        boxShadow: categoryDetail.imageId
+                          ? "0 4px 14px 0 rgba(239, 68, 68, 0.3)"
+                          : "none",
+                        "&:hover": {
+                          background: categoryDetail.imageId
+                            ? "linear-gradient(135deg, rgb(248, 113, 113) 0%, rgb(239, 68, 68) 100%)"
+                            : "rgb(156, 163, 175)",
+                          border: categoryDetail.imageId
+                            ? "2px solid rgb(127, 29, 29)"
+                            : "none",
+                          transform: categoryDetail.imageId
+                            ? "translateY(-1px)"
+                            : "none",
+                        },
+                        "&:disabled": {
+                          background: "rgb(156, 163, 175)",
+                          color: "rgb(107, 114, 128)",
+                          border: "none",
+                        },
+                        transition: "all 0.2s ease",
+                      }}
                     >
                       <DeleteForever />
                     </Button>
@@ -898,6 +1197,10 @@ const EditGame = () => {
                     width: "100%",
                     height: "100%",
                     overflow: "auto",
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    padding: "16px",
+                    boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
                   }}
                 >
                   <img
@@ -907,6 +1210,7 @@ const EditGame = () => {
                       maxHeight: "50%",
                       objectFit: "contain",
                       cursor: "zoom-in",
+                      borderRadius: "8px",
                     }}
                     onClick={() => handleImageClick(imageSrc)}
                   />
@@ -914,18 +1218,52 @@ const EditGame = () => {
               )}
             </div>
           </DialogContent>
-          <DialogActions className="bg-yellow-500">
+          <DialogActions
+            sx={{
+              background:
+                "linear-gradient(90deg, rgb(147, 51, 234) 0%, rgb(219, 39, 119) 100%)",
+              padding: "0.75rem 1.5rem 1.5rem",
+              gap: "12px",
+            }}
+          >
             <Button
               variant="outlined"
-              color="secondary"
               onClick={closeQuestionDialog}
+              sx={{
+                borderColor: "rgb(250, 204, 21)",
+                color: "rgb(250, 204, 21)",
+                borderRadius: "12px",
+                padding: "10px 24px",
+                fontWeight: "500",
+                textTransform: "none",
+                "&:hover": {
+                  borderColor: "rgb(245, 158, 11)",
+                  backgroundColor: "rgba(250, 204, 21, 0.04)",
+                },
+              }}
             >
               Cancel
             </Button>
             <Button
               variant="contained"
-              color="secondary"
               onClick={handleQuestionSave}
+              sx={{
+                background:
+                  "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+                color: "rgb(88, 28, 135)",
+                borderRadius: "12px",
+                padding: "10px 24px",
+                fontWeight: "600",
+                textTransform: "none",
+                boxShadow: "0 4px 14px 0 rgba(250, 204, 21, 0.3)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, rgb(254, 240, 138) 0%, rgb(250, 204, 21) 100%)",
+                  boxShadow: "0 6px 20px 0 rgba(250, 204, 21, 0.4)",
+                  transform: "translateY(-1px)",
+                },
+                transition: "all 0.2s ease",
+              }}
             >
               Save
             </Button>
