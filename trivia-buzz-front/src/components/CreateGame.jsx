@@ -47,12 +47,9 @@ const CreateGame = () => {
   };
 
   return (
-    <div
-      className="flex flex-col min-h-0 items-center justify-between p-8 overflow-hidden"
-      style={{ height: "100dvh" }}
-    >
+    <div className="flex flex-col items-center justify-start min-h-screen h-full w-full overflow-y-auto space-y-8 p-6">
       {/* Section 1: Header */}
-      <div className="text-center flex-shrink-0">
+      <div className="text-center">
         <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent mb-4">
           CREATE GAME
         </h1>
@@ -62,7 +59,7 @@ const CreateGame = () => {
       </div>
 
       {/* Section 2: Game Configuration Card */}
-      <div className="w-full max-w-4xl bg-black bg-opacity-40 backdrop-blur-lg rounded-3xl border border-white border-opacity-20 shadow-2xl p-8 flex-shrink-0">
+      <div className="w-full max-w-4xl bg-black bg-opacity-40 backdrop-blur-lg rounded-3xl border border-white border-opacity-20 shadow-2xl p-8">
         {/* Game Name */}
         <div className="mb-8">
           <label className="block text-white text-lg font-semibold mb-3 text-center">
@@ -196,7 +193,7 @@ const CreateGame = () => {
       </div>
 
       {/* Section 3: Create Button */}
-      <div className="flex-shrink-0">
+      <div>
         <BigButton
           text="Create Game"
           onClick={() =>
