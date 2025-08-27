@@ -1,14 +1,23 @@
 import React from "react";
+import Footer from "./Footer";
 
-const PageFrame = ({ content }) => {
+const PageFrame = ({ content, showFooter = true, onHomeClick }) => {
   const wallpaperContainer = {
     background: "linear-gradient(135deg, #1e1b4b, #581c87, #9d174d)",
     backgroundPosition: "center",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     height: "100vh",
+    display: "flex",
+    flexDirection: "column",
   };
-  return <div style={wallpaperContainer}>{content}</div>;
+
+  return (
+    <div style={wallpaperContainer}>
+      <div style={{ flex: 1, overflow: "auto" }}>{content}</div>
+      {showFooter && <Footer onHomeClick={onHomeClick} />}
+    </div>
+  );
 };
 
 export default PageFrame;

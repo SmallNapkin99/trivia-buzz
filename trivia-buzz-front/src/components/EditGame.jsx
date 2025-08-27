@@ -1136,27 +1136,27 @@ const EditGame = () => {
                       disabled={!questionDetail.imageId}
                       onClick={() => handleDeleteImage(questionDetail.imageId)}
                       sx={{
-                        background: categoryDetail.imageId
+                        background: questionDetail.imageId
                           ? "linear-gradient(135deg, rgb(239, 68, 68) 0%, rgb(220, 38, 38) 100%)"
                           : "rgb(156, 163, 175)",
                         color: "white",
                         minWidth: "48px",
                         height: "48px",
                         borderRadius: "12px",
-                        border: categoryDetail.imageId
+                        border: questionDetail.imageId
                           ? "2px solid rgb(153, 27, 27)"
                           : "none",
-                        boxShadow: categoryDetail.imageId
+                        boxShadow: questionDetail.imageId
                           ? "0 4px 14px 0 rgba(239, 68, 68, 0.3)"
                           : "none",
                         "&:hover": {
-                          background: categoryDetail.imageId
+                          background: questionDetail.imageId
                             ? "linear-gradient(135deg, rgb(248, 113, 113) 0%, rgb(239, 68, 68) 100%)"
                             : "rgb(156, 163, 175)",
-                          border: categoryDetail.imageId
+                          border: questionDetail.imageId
                             ? "2px solid rgb(127, 29, 29)"
                             : "none",
-                          transform: categoryDetail.imageId
+                          transform: questionDetail.imageId
                             ? "translateY(-1px)"
                             : "none",
                         },
