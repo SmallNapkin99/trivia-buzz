@@ -4,7 +4,7 @@ import "../Home.css";
 const BigButton = ({ text, onClick, disabled }) => {
   return (
     <button
-      className={`group relative font-black bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 hover:from-yellow-300 hover:via-yellow-400 hover:to-amber-400 w-80 h-20 text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-2xl hover:shadow-yellow-500/50 ${
+      className={`group relative font-black bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 hover:from-yellow-300 hover:via-yellow-400 hover:to-amber-400 w-80 h-20 text-xl rounded-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1  ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       }`}
       onClick={onClick}

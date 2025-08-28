@@ -90,9 +90,9 @@ const ReadyUp = () => {
   return (
     <div
       className="flex flex-col min-h-0 items-center justify-between pt-safe pb-safe overflow-hidden"
-      style={{ height: "100dvh" }}
+      style={{ height: "100svh" }}
     >
-      <div className="relative z-10 flex flex-col h-screen w-full">
+      <div className="relative z-10 flex flex-col h-full w-full">
         {/* Header Section */}
         <div className="relative bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 shadow-2xl">
           <div className="absolute inset-0 bg-black bg-opacity-10"></div>
@@ -109,13 +109,14 @@ const ReadyUp = () => {
         </div>
 
         {/* Input Area - Center */}
-        <div className="flex-1 flex items-center justify-center p-8">
+        <div className="flex-1 flex items-center justify-center p-4">
           <div className="w-full max-w-md">
             <input
               type="text"
               placeholder="Enter your name"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
+              onBlur={() => window.scrollTo(0, 0)}
               className="w-full p-6 text-2xl text-center bg-white bg-opacity-10 backdrop-blur-lg border-4 border-white border-opacity-30 rounded-3xl text-white placeholder-white placeholder-opacity-50 focus:outline-none focus:ring-4 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 shadow-2xl"
               style={{
                 boxShadow:
@@ -126,8 +127,8 @@ const ReadyUp = () => {
         </div>
 
         {/* Button Footer */}
-        <div className="relative bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 shadow-2xl">
-          <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+        <div className="relative bg-inherit">
+          <div className="absolute inset-0"></div>
           <div className="relative px-6 py-8 text-center">
             <BigButton text="Ready Up" onClick={handleReadyUp} />
           </div>
