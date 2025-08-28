@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import BigButton from "./BigButton";
 
 const GameAction = () => {
@@ -55,16 +55,18 @@ const GameAction = () => {
           <ul className="space-y-8">
             <li>
               {
-                <Link to={`/game/${game._id}/playerlist`}>
-                  <BigButton text="Play Game" />
-                </Link>
+                <BigButton
+                  text="Play Game"
+                  onClick={() => navigate(`/game/${game._id}/playerlist`)}
+                />
               }
             </li>
             <li>
               {
-                <Link to={`/game/${game._id}/edit`}>
-                  <BigButton text="Edit Game" />
-                </Link>
+                <BigButton
+                  text="Edit Game"
+                  onClick={() => navigate(`/game/${game._id}/edit`)}
+                />
               }
             </li>
             <li>

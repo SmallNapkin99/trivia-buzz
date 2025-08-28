@@ -1,10 +1,10 @@
 import React from "react";
 import "../Home.css";
-import "./BigButton.jsx";
 import BigButton from "./BigButton.jsx";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <div className="relative z-10 flex flex-col items-center justify-center space-y-24 min-h-screen px-4">
       {/* Game Show Title */}
@@ -48,13 +48,8 @@ const Home = () => {
 
       {/* Action Buttons */}
       <div className="flex space-x-8">
-        <Link to="/creategame">
-          <BigButton text="Create Game" />
-        </Link>
-
-        <Link to="/gamelist">
-          <BigButton text="Load Game" />
-        </Link>
+        <BigButton text="Create Game" onClick={() => navigate("/creategame")} />
+        <BigButton text="Load Game" onClick={() => navigate("/gamelist")} />
       </div>
 
       {/* Call to action text */}

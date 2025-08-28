@@ -1,8 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BigButton from "./BigButton";
 
 const GameList = () => {
+  const navigate = useNavigate();
   const [games, setGames] = React.useState([]);
 
   React.useEffect(() => {
@@ -32,9 +33,10 @@ const GameList = () => {
           games.map((game) => (
             <li key={game._id}>
               {
-                <Link to={`/game/${game._id}`}>
-                  <BigButton text={game.name} />
-                </Link>
+                <BigButton
+                  text={game.name}
+                  onClick={() => navigate(`/game/${game._id}`)}
+                />
               }
             </li>
           ))}

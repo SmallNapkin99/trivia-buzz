@@ -1,10 +1,11 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useWebSocket } from "./WebSocketContext";
 import { QRCodeSVG } from "qrcode.react";
 import BigButton from "./BigButton";
 
 const PlayerList = () => {
+  const navigate = useNavigate();
   const { id: gameId } = useParams();
   const [players, setPlayers] = React.useState([]);
   const socket = useWebSocket();
@@ -94,9 +95,10 @@ const PlayerList = () => {
             ))}
           </ul>
           {players.length > 0 && (
-            <Link to={`/game/${gameId}/gameboard`}>
-              <BigButton text="Players Ready" />
-            </Link>
+            <BigButton
+              text="Players Ready"
+              onClick={() => navigate(`/game/${gameId}/gameboard`)}
+            />
           )}
         </div>
       </div>
