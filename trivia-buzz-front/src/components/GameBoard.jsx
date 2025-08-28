@@ -283,29 +283,84 @@ const GameBoard = () => {
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen h-full w-full overflow-y-auto space-y-8 p-6">
-      {/* Players */}
-      <div className="flex justify-center items-stretch gap-4 w-full">
-        {players.map((player, idx) => (
-          <div
-            key={idx}
-            className={`font-bold px-6 py-3 rounded-3xl shadow-md flex items-center justify-center w-[150px] truncate border-4 border-yellow-500 transition ${
-              buzzedPlayer?.id !== player.id
-                ? "bg-transparent text-yellow-500"
-                : "bg-yellow-500 text-purple-700"
-            }`}
-          >
-            <div className="text-center flex-grow">
-              <p className="text-xl whitespace-normal">{player.name}</p>
-              <p className="text-2xl">{player.score}</p>
-            </div>
+      {/* Players Section */}
+      <div className="w-screen -m-6">
+        {/* Header with Player Cards */}
+        <div className="relative bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 overflow-hidden">
+          <div className="absolute inset-0"></div>
+          <div className="relative py-6">
+            {/* Show buzzed player in center if exists */}
+            {buzzedPlayer ? (
+              <div className="flex justify-center items-center">
+                <div className="font-bold px-6 py-4 rounded-2xl shadow-lg flex items-center justify-center w-[160px] border-4 bg-gradient-to-br from-purple-600 to-pink-600 border-pink-400 text-white">
+                  <div className="text-center flex-grow">
+                    <p className="text-2xl font-bold truncate mb-1">
+                      {buzzedPlayer.name}
+                    </p>
+                    <p className="text-xl font-black">
+                      {buzzedPlayer.score?.toLocaleString() || 0}
+                      <span className="text-sm ml-1 opacity-70">pts</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Conveyor belt animation when no one has buzzed */
+              <div
+                className="relative flex items-center justify-center"
+                style={{ height: "88px" }}
+              >
+                <div
+                  className="absolute whitespace-nowrap flex items-center gap-4"
+                  style={{
+                    animation: `scroll ${Math.max(
+                      players.length * 4,
+                      20
+                    )}s linear infinite`,
+                  }}
+                >
+                  {/* Render players only once for seamless loop */}
+                  {players.map((player, idx) => (
+                    <div
+                      key={player.id}
+                      className="font-bold px-6 py-4 rounded-2xl shadow-lg flex items-center justify-center w-[160px] border-4 bg-white bg-opacity-20 backdrop-blur-lg border-white border-opacity-40 text-black flex-shrink-0"
+                    >
+                      <div className="text-center flex-grow">
+                        <p className="text-2xl font-bold truncate mb-1">
+                          {player.name}
+                        </p>
+                        <p className="text-xl font-black">
+                          {player.score?.toLocaleString() || 0}
+                          <span className="text-sm ml-1 opacity-70">pts</span>
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        ))}
+          {/* Decorative bottom border */}
+          <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-600 to-pink-600"></div>
+        </div>
+
+        {/* Add CSS animation */}
+        <style jsx>{`
+          @keyframes scroll {
+            0% {
+              transform: translateX(100vw);
+            }
+            100% {
+              transform: translateX(calc(-100% - 100vw));
+            }
+          }
+        `}</style>
       </div>
       {/* Game Grid */}
       {game && (
         <div className="flex justify-center w-full">
           <div
-            className="grid gap-6 w-full max-w-screen-xl"
+            className="grid gap-6 w-full max-w-screen-xl mt-6"
             style={{
               gridTemplateColumns: `repeat(${
                 game.categories.filter((cat) => cat.round === currentRound)
