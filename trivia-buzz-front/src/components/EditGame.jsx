@@ -737,6 +737,9 @@ const EditGame = () => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
+                  "& .MuiInputBase-input": {
+                    color: "white",
+                  },
                 }}
               />
               <TextField
@@ -764,6 +767,9 @@ const EditGame = () => {
                   // Focused underline
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "rgb(234, 179, 8)", // match label focused
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "white",
                   },
                 }}
               />
@@ -793,6 +799,9 @@ const EditGame = () => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
+                  "& .MuiInputBase-input": {
+                    color: "white",
+                  },
                 }}
               />
               <TextField
@@ -820,6 +829,9 @@ const EditGame = () => {
                   // Focused underline
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "rgb(234, 179, 8)", // match label focused
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "white",
                   },
                 }}
               />
@@ -1066,6 +1078,9 @@ const EditGame = () => {
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "rgb(234, 179, 8)", // match label focused
                   },
+                  "& .MuiInputBase-input": {
+                    color: "white",
+                  },
                 }}
               />
               <TextField
@@ -1093,6 +1108,9 @@ const EditGame = () => {
                   // Focused underline
                   "& .MuiInput-underline:after": {
                     borderBottomColor: "rgb(234, 179, 8)", // match label focused
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "white",
                   },
                 }}
               />
