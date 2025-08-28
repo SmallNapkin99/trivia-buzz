@@ -3,7 +3,7 @@ import { Home } from "lucide-react";
 
 const Footer = ({ onHomeClick }) => {
   return (
-    <footer className="bg-black bg-opacity-50 backdrop-blur-sm border-t border-white border-opacity-20 opacity-0 hover:opacity-100 transition-opacity duration-300 ease-in-out">
+    <footer className="bg-black bg-opacity-50 backdrop-blur-sm border-t border-white border-opacity-20">
       <div className="flex justify-center items-center py-4">
         <button
           onClick={onHomeClick}
