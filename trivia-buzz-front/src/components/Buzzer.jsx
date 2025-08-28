@@ -79,9 +79,9 @@ const Buzzer = () => {
   return (
     <div
       className="flex flex-col min-h-0 items-center justify-between pt-safe pb-safe overflow-hidden"
-      style={{ height: "100dvh" }}
+      style={{ height: "100svh" }}
     >
-      <div className="relative z-10 flex flex-col h-screen w-full">
+      <div className="relative z-10 flex flex-col h-full w-full">
         {/* Player Name Header */}
         <div className="relative bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 shadow-2xl">
           <div className="absolute inset-0 bg-black bg-opacity-10"></div>
@@ -114,11 +114,18 @@ const Buzzer = () => {
               }}
             ></div>
 
+            {/* Ripple Effect - Now inside the relative container */}
+            {buzzPressed && (
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20">
+                <div className="w-80 h-80 border-4 border-white rounded-full opacity-70 animate-ping"></div>
+              </div>
+            )}
+
             {/* Main Button */}
             <button
               onClick={() => handleBuzz(playerId)}
               disabled={lockBuzzer}
-              className={`relative w-80 h-80 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 shadow-2xl border-8 ${
+              className={`relative w-80 h-80 rounded-full flex flex-col items-center justify-center transition-all duration-300 transform active:scale-95 shadow-2xl border-8 ${
                 lockBuzzer
                   ? "bg-gradient-to-br from-red-600 to-red-800 border-red-400 cursor-not-allowed"
                   : "bg-gradient-to-br from-green-500 to-emerald-700 border-green-300 hover:scale-105 active:scale-95 cursor-pointer"
@@ -139,21 +146,19 @@ const Buzzer = () => {
               ></div>
 
               {/* Icon */}
-              <HandRaisedIcon className="relative z-10 w-32 h-32 text-white drop-shadow-lg" />
+              <HandRaisedIcon className="relative z-10 w-24 h-24 text-white drop-shadow-lg mb-4" />
 
               {/* Buzz Text */}
-              <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2">
-                <span className="text-2xl font-black text-white drop-shadow-lg tracking-wider">
-                  {lockBuzzer ? "LOCKED" : "BUZZ!"}
-                </span>
-              </div>
+              <span className="relative z-10 text-2xl font-black text-white drop-shadow-lg tracking-wider">
+                {lockBuzzer ? "LOCKED" : "BUZZ!"}
+              </span>
             </button>
           </div>
         </div>
 
         {/* Score Footer */}
-        <div className="relative bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 shadow-2xl">
-          <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+        <div className="relative bg-inherit">
+          <div className="absolute inset-0"></div>
           <div className="relative px-6 py-8 text-center">
             <div className="text-xs font-semibold text-purple-200 mb-1 tracking-widest uppercase">
               Current Score
@@ -167,13 +172,6 @@ const Buzzer = () => {
           <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 to-amber-500"></div>
         </div>
       </div>
-
-      {/* Ripple Effect on Buzz */}
-      {buzzPressed && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-          <div className="w-80 h-80 border-4 border-white rounded-full opacity-70 animate-ping"></div>
-        </div>
-      )}
 
       <style jsx>{`
         @keyframes ripple {
