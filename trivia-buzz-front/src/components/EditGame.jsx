@@ -928,7 +928,7 @@ const EditGame = () => {
                 >
                   <img
                     src={imageSrc}
-                    alt="Category Image"
+                    alt="Category"
                     style={{
                       maxWidth: "50%",
                       maxHeight: "50%",
@@ -1208,7 +1208,7 @@ const EditGame = () => {
                 >
                   <img
                     src={imageSrc}
-                    alt="Question Image"
+                    alt="Question"
                     style={{
                       maxWidth: "50%",
                       maxHeight: "50%",

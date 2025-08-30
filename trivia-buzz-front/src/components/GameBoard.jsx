@@ -15,6 +15,7 @@ const GameBoard = () => {
   const [focusedCategory, setFocusedCategory] = React.useState(null);
   const [focusedQuestion, setFocusedQuestion] = React.useState(null);
   const [answeredQuestions, setAnsweredQuestions] = React.useState([]);
+  const [screenWidth, setScreenWidth] = React.useState(1200);
 
   React.useEffect(() => {
     const fetchGame = async () => {
@@ -191,6 +192,30 @@ const GameBoard = () => {
     };
   }, [socket, handleCloseBuzzers]);
 
+  React.useEffect(() => {
+    const updateScreenWidth = () => setScreenWidth(window.innerWidth);
+    updateScreenWidth();
+    window.addEventListener("resize", updateScreenWidth);
+    return () => window.removeEventListener("resize", updateScreenWidth);
+  }, []);
+
+  // Calculate if we need conveyor belt
+  const cardWidth = 176; // 160px width + 16px gap
+  const headerPadding = 48; // Account for container padding
+  const availableWidth = screenWidth - headerPadding;
+  const totalCardsWidth = cardWidth * players.length;
+  const needsConveyorBelt = totalCardsWidth > availableWidth;
+
+  // For conveyor belt, create enough copies to ensure seamless scrolling
+  const displayPlayers = needsConveyorBelt
+    ? Array.from(
+        {
+          length: Math.ceil(availableWidth / (cardWidth * players.length)) + 3,
+        },
+        () => players
+      ).flat()
+    : players;
+
   const updateScore = (scoreUpdate) => {
     if (!buzzedPlayer) {
       return;
@@ -304,25 +329,22 @@ const GameBoard = () => {
                   </div>
                 </div>
               </div>
-            ) : (
-              /* Conveyor belt animation when no one has buzzed */
+            ) : needsConveyorBelt ? (
+              /* Conveyor belt animation when too many players */
               <div
-                className="relative flex items-center justify-center"
-                style={{ height: "88px" }}
+                className="relative flex items-center justify-center overflow-hidden"
+                style={{ height: "100px" }}
               >
                 <div
-                  className="absolute whitespace-nowrap flex items-center gap-4"
+                  className="absolute flex items-center gap-4"
                   style={{
-                    animation: `scroll ${Math.max(
-                      players.length * 4,
-                      20
-                    )}s linear infinite`,
+                    animation: `scroll ${players.length * 6}s linear infinite`,
+                    width: "max-content",
                   }}
                 >
-                  {/* Render players only once for seamless loop */}
-                  {players.map((player, idx) => (
+                  {displayPlayers.map((player, idx) => (
                     <div
-                      key={player.id}
+                      key={`conveyor-${idx}`}
                       className="font-bold px-6 py-4 rounded-2xl shadow-lg flex items-center justify-center w-[160px] border-4 bg-white bg-opacity-20 backdrop-blur-lg border-white border-opacity-40 text-black flex-shrink-0"
                     >
                       <div className="text-center flex-grow">
@@ -338,24 +360,50 @@ const GameBoard = () => {
                   ))}
                 </div>
               </div>
+            ) : (
+              /* Static centered display when players fit on screen */
+              <div
+                className="flex items-center justify-center gap-4 px-6"
+                style={{ height: "100px" }}
+              >
+                {players.map((player) => (
+                  <div
+                    key={`static-${player.id}`}
+                    className="font-bold px-6 py-4 rounded-2xl shadow-lg flex items-center justify-center w-[160px] border-4 bg-white bg-opacity-20 backdrop-blur-lg border-white border-opacity-40 text-black flex-shrink-0"
+                  >
+                    <div className="text-center flex-grow">
+                      <p className="text-2xl font-bold truncate mb-1">
+                        {player.name}
+                      </p>
+                      <p className="text-xl font-black">
+                        {player.score?.toLocaleString() || 0}
+                        <span className="text-sm ml-1 opacity-70">pts</span>
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
           {/* Decorative bottom border */}
           <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-600 to-pink-600"></div>
         </div>
 
-        {/* Add CSS animation */}
-        <style jsx>{`
-          @keyframes scroll {
-            0% {
-              transform: translateX(100vw);
+        {/* Add CSS animation - only renders when conveyor belt is needed */}
+        {needsConveyorBelt && (
+          <style jsx>{`
+            @keyframes scroll {
+              0% {
+                transform: translateX(100%);
+              }
+              100% {
+                transform: translateX(-100%);
+              }
             }
-            100% {
-              transform: translateX(calc(-100% - 100vw));
-            }
-          }
-        `}</style>
+          `}</style>
+        )}
       </div>
+
       {/* Game Grid */}
       {game && (
         <div className="flex justify-center w-full">
@@ -420,38 +468,54 @@ const GameBoard = () => {
                 />
               </div>
             ) : (
-              game.categories
-                .filter((cat) => cat.round === currentRound)
-                .map((category, idx) => (
-                  <div key={idx} className="flex flex-col items-center w-full">
-                    <div className="space-y-10 w-full">
-                      {questions
-                        .filter(
-                          (q) =>
-                            q.round === currentRound &&
-                            q.category === category.name
-                        )
-                        .sort((a, b) => a.value - b.value)
-                        .map((question, idx) => (
-                          <div
-                            key={idx}
-                            className={`transition-all duration-500 ${
-                              answeredQuestions.includes(question._id)
-                                ? "opacity-0 pointer-events-none"
-                                : ""
-                            }`}
-                            onClick={() => handleQuestionClick(question)}
-                          >
-                            <div className="flex items-center justify-center w-full text-center p-6 bg-yellow-500 text-purple-800 font-bold rounded-3xl hover:bg-yellow-300 cursor-pointer animate-fadeIn">
-                              <h4 className="text-xl">{`${
-                                question.value * currentRound
-                              }`}</h4>
+              <div
+                className="col-span-full min-h-[65vh]"
+                style={{
+                  gridRow: "3 / 4",
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${
+                    game.categories.filter((cat) => cat.round === currentRound)
+                      .length
+                  }, 1fr)`,
+                  gap: "1.5rem",
+                }}
+              >
+                {game.categories
+                  .filter((cat) => cat.round === currentRound)
+                  .map((category, idx) => (
+                    <div
+                      key={idx}
+                      className="flex flex-col items-center w-full h-full"
+                    >
+                      <div className="space-y-10 w-full h-full flex flex-col justify-center">
+                        {questions
+                          .filter(
+                            (q) =>
+                              q.round === currentRound &&
+                              q.category === category.name
+                          )
+                          .sort((a, b) => a.value - b.value)
+                          .map((question, idx) => (
+                            <div
+                              key={idx}
+                              className={`transition-all duration-500 flex-1 ${
+                                answeredQuestions.includes(question._id)
+                                  ? "opacity-0 pointer-events-none"
+                                  : ""
+                              }`}
+                              onClick={() => handleQuestionClick(question)}
+                            >
+                              <div className="flex items-center justify-center w-full h-full text-center p-6 bg-yellow-500 text-purple-800 font-bold rounded-3xl hover:bg-yellow-300 cursor-pointer animate-fadeIn">
+                                <h4 className="text-xl">
+                                  {question.value * currentRound}
+                                </h4>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+              </div>
             )}
           </div>
         </div>
