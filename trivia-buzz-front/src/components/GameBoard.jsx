@@ -431,7 +431,7 @@ const GameBoard = () => {
             {focusedCategory ? (
               <div className="col-span-full flex items-center justify-center h-[80px] animate-fadeIn">
                 <h3
-                  className="text-4xl font-bold text-yellow-400 p-3 rounded-md cursor-pointer"
+                  className="text-4xl font-bold text-transparent bg-gradient-to-r from-yellow-400 via-yellow-400 to-yellow-400 hover:from-pink-600 hover:via-yellow-400 hover:to-purple-600 bg-clip-text p-3 rounded-md cursor-pointer transition-all duration-300"
                   onClick={() => handleCategoryClick(focusedCategory)}
                 >
                   {focusedCategory}
@@ -447,7 +447,7 @@ const GameBoard = () => {
                       className="flex flex-col items-center w-full"
                     >
                       <h3
-                        className="text-2xl font-bold text-center text-yellow-400 p-3 rounded-md w-full cursor-pointer transition flex items-center justify-center h-full animate-fadeIn"
+                        className="text-2xl font-bold text-center text-transparent bg-gradient-to-r from-yellow-400 via-yellow-400 to-yellow-400 hover:from-pink-600 hover:via-yellow-400 hover:to-purple-600 bg-clip-text p-3 rounded-md w-full cursor-pointer transition-all duration-300 flex items-center justify-center h-full animate-fadeIn"
                         onClick={() => handleCategoryClick(category)}
                       >
                         {category.name}
@@ -458,7 +458,9 @@ const GameBoard = () => {
             )}
 
             {/* Horizontal Line */}
-            <div className="col-span-full border-t-2 border-yellow-400 w-full mb-4" />
+            <div className="col-span-full flex items-center justify-center mb-4">
+              <div className="w-full h-1 bg-gradient-to-r from-pink-600 via-yellow-400 to-purple-600 relative"></div>
+            </div>
 
             {/* Questions */}
             {focusedQuestion ? (
