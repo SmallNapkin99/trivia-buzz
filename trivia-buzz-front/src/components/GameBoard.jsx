@@ -9,7 +9,19 @@ const GameBoard = () => {
   const navigate = useNavigate();
   const [game, setGame] = React.useState(null);
   const [questions, setQuestions] = React.useState([]);
-  const [players, setPlayers] = React.useState([]);
+  const [players, setPlayers] = React.useState([
+    { name: "TEST1", id: 1, score: 0 },
+    { name: "TEST2", id: 2, score: 0 },
+    { name: "TEST3", id: 3, score: 0 },
+    { name: "TEST4", id: 4, score: 0 },
+    { name: "TEST5", id: 5, score: 0 },
+    { name: "TEST6", id: 6, score: 0 },
+    { name: "TEST7", id: 7, score: 0 },
+    { name: "TEST8", id: 8, score: 0 },
+    { name: "TEST9", id: 9, score: 0 },
+    { name: "TEST10", id: 10, score: 0 },
+    { name: "TEST11", id: 11, score: 0 },
+  ]);
   const [buzzedPlayer, setBuzzedPlayer] = React.useState(null);
   const [currentRound, setCurrentRound] = React.useState(1);
   const [focusedCategory, setFocusedCategory] = React.useState(null);
@@ -207,13 +219,9 @@ const GameBoard = () => {
   const needsConveyorBelt = totalCardsWidth > availableWidth;
 
   // For conveyor belt, create enough copies to ensure seamless scrolling
+  const copiesNeeded = Math.ceil((availableWidth * 2) / totalCardsWidth) + 1;
   const displayPlayers = needsConveyorBelt
-    ? Array.from(
-        {
-          length: Math.ceil(availableWidth / (cardWidth * players.length)) + 3,
-        },
-        () => players
-      ).flat()
+    ? Array(copiesNeeded).fill(players).flat()
     : players;
 
   const updateScore = (scoreUpdate) => {
@@ -333,12 +341,14 @@ const GameBoard = () => {
               /* Conveyor belt animation when too many players */
               <div
                 className="relative flex items-center justify-center overflow-hidden"
-                style={{ height: "100px" }}
+                style={{ height: "104px" }}
               >
                 <div
-                  className="absolute flex items-center gap-4"
+                  className="flex items-center gap-4"
                   style={{
-                    animation: `scroll ${players.length * 6}s linear infinite`,
+                    animation: `scroll ${
+                      totalCardsWidth / 60
+                    }s linear infinite`,
                     width: "max-content",
                   }}
                 >
@@ -364,7 +374,7 @@ const GameBoard = () => {
               /* Static centered display when players fit on screen */
               <div
                 className="flex items-center justify-center gap-4 px-6"
-                style={{ height: "100px" }}
+                style={{ height: "104px" }}
               >
                 {players.map((player) => (
                   <div
@@ -389,15 +399,15 @@ const GameBoard = () => {
           <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-600 to-pink-600"></div>
         </div>
 
-        {/* Add CSS animation - only renders when conveyor belt is needed */}
+        {/* Conveyor Belt Animation */}
         {needsConveyorBelt && (
           <style jsx>{`
             @keyframes scroll {
               0% {
-                transform: translateX(100%);
+                transform: translateX(0px);
               }
               100% {
-                transform: translateX(-100%);
+                transform: translateX(-${totalCardsWidth}px);
               }
             }
           `}</style>
