@@ -517,11 +517,6 @@ const GameBoard = () => {
                               }`}
                               onClick={() => handleQuestionClick(question)}
                             >
-                              {/* <div className="flex items-center justify-center w-full h-full text-center p-6 border-4 bg-amber-300 bg-opacity-80 backdrop-blur-lg border-white border-opacity-40 text-black rounded-3xl hover:bg-yellow-300 hover:border-amber-400 cursor-pointer animate-fadeIn">
-                                <h4 className="text-xl">
-                                  {question.value * currentRound}
-                                </h4>
-                              </div> */}
                               <div className="p-1 bg-gradient-to-r from-pink-600 via-yellow-400 to-purple-600 rounded-3xl hover:from-pink-700 hover:via-yellow-500 hover:to-purple-700 transition-all duration-300 ease-in-out">
                                 <div className="flex items-center justify-center w-full h-full text-center p-6 bg-amber-400 bg-opacity-80 backdrop-blur-lg text-black rounded-3xl hover:bg-yellow-300 cursor-pointer animate-fadeIn">
                                   <h4 className="text-xl">
