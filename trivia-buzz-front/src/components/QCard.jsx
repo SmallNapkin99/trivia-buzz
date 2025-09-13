@@ -164,11 +164,11 @@ const QCard = ({
         <div className="flex flex-col items-center max-h-[65vh] overflow-hidden animate-fadeIn">
           <h4 className="text-3xl mb-4">{`${question.answer}`}</h4>
           {imageSrc && (
-            <div className="flex justify-center items-center w-full">
+            <div className="flex justify-center items-center w-full h-full">
               <img
                 src={imageSrc}
                 alt="answer_image"
-                className="max-w-[50%] max-h-[50%] object-contain cursor-zoom-in rounded-2xl"
+                className="max-w-[70%] max-h-[calc(65vh-2rem)] object-contain cursor-zoom-in rounded-2xl"
                 onClick={() => handleImageClick(imageSrc)}
               />
             </div>
@@ -176,21 +176,41 @@ const QCard = ({
         </div>
       )}
 
-      {/* Buttons on the right */}
+      {/* Modern Gameshow Style Buttons */}
       {question.value && questionState === "answer" && (
-        <div className="absolute top-1/2 right-4 flex flex-col space-y-16 transform -translate-y-1/2">
-          <button
-            className="p-3 bg-green-700 text-white rounded-full hover:bg-green-600 transition animate-fadeIn"
-            onClick={() => handleUpdateScore(question.value)}
-          >
-            <CheckCircleIcon className="w-12 h-12" />
-          </button>
-          <button
-            className="p-3 bg-red-700 text-white rounded-full hover:bg-red-600 transition animate-fadeIn"
-            onClick={() => handleUpdateScore(question.value * -1)}
-          >
-            <XCircleIcon className="w-12 h-12" />
-          </button>
+        <div className="absolute top-1/2 right-8 flex flex-col space-y-6 transform -translate-y-1/2">
+          <div className="w-20 h-20 flex items-center justify-center">
+            <div
+              className={`p-1 rounded-2xl hover:p-2 transition-all duration-300 ease-in-out animate-fadeIn ${
+                isDailyDouble
+                  ? "bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-400"
+                  : "bg-gradient-to-r from-pink-400 via-purple-500 to-pink-600"
+              }`}
+            >
+              <button
+                className="p-4 bg-green-600 bg-opacity-90 backdrop-blur-lg text-white rounded-2xl hover:bg-green-500 hover:bg-opacity-95 transition-all duration-200 shadow-lg hover:shadow-xl"
+                onClick={() => handleUpdateScore(question.value)}
+              >
+                <CheckCircleIcon className="w-10 h-10" />
+              </button>
+            </div>
+          </div>
+          <div className="w-20 h-20 flex items-center justify-center">
+            <div
+              className={`p-1 rounded-2xl hover:p-2 transition-all duration-300 ease-in-out animate-fadeIn ${
+                isDailyDouble
+                  ? "bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-400"
+                  : "bg-gradient-to-r from-pink-400 via-purple-500 to-pink-600"
+              }`}
+            >
+              <button
+                className="p-4 bg-red-600 bg-opacity-90 backdrop-blur-lg text-white rounded-2xl hover:bg-red-500 hover:bg-opacity-95 transition-all duration-200 shadow-lg hover:shadow-xl"
+                onClick={() => handleUpdateScore(question.value * -1)}
+              >
+                <XCircleIcon className="w-10 h-10" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
