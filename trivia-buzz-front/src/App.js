@@ -11,14 +11,28 @@ import PlayerList from "./components/PlayerList";
 import Buzzer from "./components/Buzzer";
 import GameBoard from "./components/GameBoard";
 import Podium from "./components/Podium";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const handleHomeClick = () => {
     navigate("/");
   };
+
+  // Define which routes should NOT show the footer
+  const routesWithoutFooter = ["/buzzer", "/readyup"];
+
+  const shouldHideFooter = routesWithoutFooter.some((route) =>
+    location.pathname.includes(route)
+  );
 
   return (
     <PageFrame
@@ -46,6 +60,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       }
+      showFooter={!shouldHideFooter}
       onHomeClick={handleHomeClick}
     />
   );
