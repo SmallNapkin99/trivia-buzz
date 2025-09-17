@@ -76,7 +76,20 @@ router.post("/", async (req, res) => {
     await newGame.save();
     res.json(newGame);
   } catch (err) {
-    res.status(500).json({ error: "Error adding game" });
+    console.error("Error details:", err);
+
+    if (err.name === "ValidationError") {
+      res.status(400).json({
+        error: "Validation error",
+        details: err.message,
+        errors: err.errors,
+      });
+    } else {
+      res.status(500).json({
+        error: "Error adding game",
+        details: err.message,
+      });
+    }
   }
 });
 

@@ -1,9 +1,6 @@
-import React, { useState } from "react";
 import Footer from "./Footer";
 
 const PageFrame = ({ content, showFooter = true, onHomeClick }) => {
-  const [isFooterVisible, setIsFooterVisible] = useState(false);
-
   const wallpaperContainer = {
     background: "linear-gradient(135deg, #1e1b4b, #581c87, #9d174d)",
     backgroundPosition: "center",

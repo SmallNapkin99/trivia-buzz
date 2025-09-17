@@ -8,27 +8,50 @@ const CreateGame = () => {
   const [questionsPerCategory, setQuestionsPerCategory] = React.useState(5);
   const [rounds, setRounds] = React.useState(2);
   const [showNotification, setShowNotification] = React.useState(false);
+  const [notificationStatus, setNotificationStatus] = React.useState("success"); // "success" or "error"
   const navigate = useNavigate();
 
   const createGame = async (gameData) => {
-    fetch(`${process.env.REACT_APP_API_URL}/games`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(gameData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Game created:", data);
-        setShowNotification(true);
-        setTimeout(() => {
-          navigate(`/game/${data._id}/edit`);
-        }, 1500);
-      })
-      .catch((error) => {
-        console.error("Error creating game:", error);
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/games`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(gameData),
       });
+
+      if (!response.ok) {
+        // If response is not ok, throw an error
+        const errorData = await response.json();
+        throw new Error(
+          errorData.details || errorData.error || "Failed to create game"
+        );
+      }
+
+      const data = await response.json();
+      console.log("Game created:", data);
+
+      // Success notification
+      setNotificationStatus("success");
+      setShowNotification(true);
+
+      setTimeout(() => {
+        setShowNotification(false);
+        navigate(`/game/${data._id}/edit`);
+      }, 1500);
+    } catch (error) {
+      console.error("Error creating game:", error);
+
+      // Error notification
+      setNotificationStatus("error");
+      setShowNotification(true);
+
+      // Hide error notification after 3 seconds (no navigation)
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 3000);
+    }
   };
 
   // Create categories structure for API
@@ -208,26 +231,50 @@ const CreateGame = () => {
         />
       </div>
 
-      {/* Success Notification */}
+      {/* Success/Error Notification */}
       {showNotification && (
         <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50">
-          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-2xl shadow-2xl border border-green-400 animate-bounce">
+          <div
+            className={`px-8 py-4 rounded-2xl shadow-2xl border animate-bounce ${
+              notificationStatus === "success"
+                ? "bg-gradient-to-r from-green-500 to-emerald-500 border-green-400 text-white"
+                : "bg-gradient-to-r from-red-500 to-red-600 border-red-400 text-white"
+            }`}
+          >
             <div className="flex items-center space-x-3">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 13l4 4L19 7"
-                ></path>
-              </svg>
+              {notificationStatus === "success" ? (
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              ) : (
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              )}
               <span className="text-lg font-bold">
-                Game Created Successfully!
+                {notificationStatus === "success"
+                  ? "Game Created Successfully!"
+                  : "Error Creating Game"}
               </span>
             </div>
           </div>
