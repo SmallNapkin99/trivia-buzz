@@ -297,21 +297,18 @@ const GameBoard = () => {
         setCurrentRound((prev) => prev + 1);
       }
     }
-    if (!buzzedPlayer) {
-      return;
-    } else {
-      //send ws message to update answered questions
-      socket.send(
-        JSON.stringify({
-          action: "question_answered",
-          questionId: questionId,
-        })
-      );
-      setAnsweredQuestions((prev) => [...prev, questionId]);
-      setFocusedQuestion(null);
-      setFocusedCategory(null);
-      handleCloseBuzzers();
-    }
+
+    //send ws message to update answered questions
+    socket.send(
+      JSON.stringify({
+        action: "question_answered",
+        questionId: questionId,
+      })
+    );
+    setAnsweredQuestions((prev) => [...prev, questionId]);
+    setFocusedQuestion(null);
+    setFocusedCategory(null);
+    handleCloseBuzzers();
   };
 
   return (

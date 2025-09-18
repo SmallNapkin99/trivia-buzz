@@ -3,6 +3,7 @@ import { LockClosedIcon } from "@heroicons/react/24/solid";
 import { LockOpenIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { XCircleIcon } from "@heroicons/react/24/solid";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 const QCard = ({
   question,
@@ -11,6 +12,7 @@ const QCard = ({
   onOpenBuzzers,
   onScoreUpdate,
   socket,
+  timerDuration = 20,
 }) => {
   const [questionState, setQuestionState] = React.useState("question");
   const [questionLocked, setQuestionLocked] = React.useState(true);
@@ -19,6 +21,8 @@ const QCard = ({
   const [imageModalOpen, setImageModalOpen] = React.useState(false);
   const [modalImage, setModalImage] = React.useState(null);
   const [isBuzzedPlayer, setIsBuzzedPlayer] = React.useState(false);
+  const [timerKey, setTimerKey] = React.useState(0);
+  const [isTimerActive, setIsTimerActive] = React.useState(false);
 
   const openBuzzerSound = new Audio("/open_buzzers.mp3");
   const rightAnswerSound = new Audio("/correct_answer.mp3");
@@ -45,6 +49,8 @@ const QCard = ({
         const data = JSON.parse(event.data);
         if (data.action === "buzzed_in") {
           setIsBuzzedPlayer(true);
+          //give buzzer player extra time to answer
+          setTimerKey((prev) => prev + 1);
         }
       };
       socket.addEventListener("message", handleMessage);
@@ -64,9 +70,14 @@ const QCard = ({
         return;
       } else {
         setQuestionState("answer");
+        if (question.value) {
+          setIsTimerActive(false);
+          setTimerKey((prev) => prev + 1);
+        }
       }
     } else {
       setQuestionState("question");
+      setIsTimerActive(false);
     }
   };
 
@@ -77,6 +88,7 @@ const QCard = ({
       handleCloseBuzzers();
     }
     setQuestionLocked(!questionLocked);
+    setIsTimerActive(!isTimerActive);
   };
 
   const handleOpenBuzzers = () => {
@@ -96,7 +108,18 @@ const QCard = ({
       wrongAnswerSound.play();
     }
     onScoreUpdate(_scoreUpdate);
+    setIsTimerActive(false);
     onAnswer();
+  };
+
+  const handleTimerComplete = () => {
+    setIsTimerActive(false);
+    if (isBuzzedPlayer) {
+      handleUpdateScore(question.value * -1);
+    } else {
+      onAnswer();
+    }
+    return { shouldRepeat: false };
   };
 
   const handleImageClick = (image) => {
@@ -159,6 +182,33 @@ const QCard = ({
               )}
             </div>
           ) : null}
+
+          {/* Timer in Top Right */}
+          {question.value && isTimerActive && (
+            <div className="absolute top-4 right-4">
+              <CountdownCircleTimer
+                key={timerKey}
+                isPlaying={isTimerActive}
+                duration={timerDuration}
+                colors={["#10B981", "#F59E0B", "#EF4444", "#DC2626"]}
+                colorsTime={[
+                  timerDuration * 0.6,
+                  timerDuration * 0.4,
+                  timerDuration * 0.2,
+                  0,
+                ]}
+                size={80}
+                strokeWidth={6}
+                onComplete={handleTimerComplete}
+              >
+                {({ remainingTime }) => (
+                  <div className="text-white text-sm font-bold">
+                    {remainingTime}
+                  </div>
+                )}
+              </CountdownCircleTimer>
+            </div>
+          )}
         </>
       ) : (
         <div className="flex flex-col items-center max-h-[65vh] overflow-hidden animate-fadeIn">
