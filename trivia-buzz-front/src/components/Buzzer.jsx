@@ -8,7 +8,7 @@ const Buzzer = () => {
   const location = useLocation();
   const { playerId } = location.state || {};
   const [player, setPlayer] = React.useState(null);
-  const [lockBuzzer, setLockBuzzer] = React.useState(false);
+  const [lockBuzzer, setLockBuzzer] = React.useState(true);
   const [buzzPressed, setBuzzPressed] = React.useState(false);
 
   React.useEffect(() => {
@@ -24,16 +24,13 @@ const Buzzer = () => {
             setPlayer((prevPlayer) => ({ ...prevPlayer, score: newScore }));
           }
         }
-        //handle buzzer lock
-        if (data.action === "lock_buzzer") {
-          const { playerId: lockedPlayerId } = data;
-          if (lockedPlayerId === playerId) {
-            setLockBuzzer(true);
-
-            setTimeout(() => {
-              setLockBuzzer(false);
-            }, 5000);
-          }
+        //handle unlock buzzers
+        if (data.action === "unlock_buzzers") {
+          setLockBuzzer(false);
+        }
+        //handle lock buzzers
+        if (data.action === "lock_buzzers") {
+          setLockBuzzer(true);
         }
         //set listener to set player state
         if (data.action === "set_player_list") {
