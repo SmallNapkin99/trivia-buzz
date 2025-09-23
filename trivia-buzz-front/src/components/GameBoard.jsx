@@ -9,12 +9,25 @@ const GameBoard = () => {
   const navigate = useNavigate();
   const [game, setGame] = React.useState(null);
   const [questions, setQuestions] = React.useState([]);
-  const [players, setPlayers] = React.useState([]);
+  const [players, setPlayers] = React.useState([
+    { name: "TEST1", id: 1, score: 0 },
+    { name: "TEST2", id: 2, score: 0 },
+    { name: "TEST3", id: 3, score: 0 },
+    { name: "TEST4", id: 4, score: 0 },
+    { name: "TEST5", id: 5, score: 0 },
+    { name: "TEST6", id: 6, score: 0 },
+    { name: "TEST7", id: 7, score: 0 },
+    { name: "TEST8", id: 8, score: 0 },
+    { name: "TEST9", id: 9, score: 0 },
+    { name: "TEST10", id: 10, score: 0 },
+    { name: "TEST11", id: 11, score: 0 },
+  ]);
   const [buzzedPlayer, setBuzzedPlayer] = React.useState(null);
   const [currentRound, setCurrentRound] = React.useState(1);
   const [focusedCategory, setFocusedCategory] = React.useState(null);
   const [focusedQuestion, setFocusedQuestion] = React.useState(null);
   const [answeredQuestions, setAnsweredQuestions] = React.useState([]);
+  const [screenWidth, setScreenWidth] = React.useState(1200);
 
   React.useEffect(() => {
     const fetchGame = async () => {
@@ -191,6 +204,26 @@ const GameBoard = () => {
     };
   }, [socket, handleCloseBuzzers]);
 
+  React.useEffect(() => {
+    const updateScreenWidth = () => setScreenWidth(window.innerWidth);
+    updateScreenWidth();
+    window.addEventListener("resize", updateScreenWidth);
+    return () => window.removeEventListener("resize", updateScreenWidth);
+  }, []);
+
+  // Calculate if we need conveyor belt
+  const cardWidth = 176; // 160px width + 16px gap
+  const headerPadding = 48; // Account for container padding
+  const availableWidth = screenWidth - headerPadding;
+  const totalCardsWidth = cardWidth * players.length;
+  const needsConveyorBelt = totalCardsWidth > availableWidth;
+
+  // For conveyor belt, create enough copies to ensure seamless scrolling
+  const copiesNeeded = Math.ceil((availableWidth * 2) / totalCardsWidth) + 1;
+  const displayPlayers = needsConveyorBelt
+    ? Array(copiesNeeded).fill(players).flat()
+    : players;
+
   const updateScore = (scoreUpdate) => {
     if (!buzzedPlayer) {
       return;
@@ -264,48 +297,125 @@ const GameBoard = () => {
         setCurrentRound((prev) => prev + 1);
       }
     }
-    if (!buzzedPlayer) {
-      return;
-    } else {
-      //send ws message to update answered questions
-      socket.send(
-        JSON.stringify({
-          action: "question_answered",
-          questionId: questionId,
-        })
-      );
-      setAnsweredQuestions((prev) => [...prev, questionId]);
-      setFocusedQuestion(null);
-      setFocusedCategory(null);
-      handleCloseBuzzers();
-    }
+
+    //send ws message to update answered questions
+    socket.send(
+      JSON.stringify({
+        action: "question_answered",
+        questionId: questionId,
+      })
+    );
+    setAnsweredQuestions((prev) => [...prev, questionId]);
+    setFocusedQuestion(null);
+    setFocusedCategory(null);
+    handleCloseBuzzers();
   };
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen h-full w-full overflow-y-auto space-y-8 p-6">
-      {/* Players */}
-      <div className="flex justify-center items-stretch gap-4 w-full">
-        {players.map((player, idx) => (
-          <div
-            key={idx}
-            className={`font-bold px-6 py-3 rounded-3xl shadow-md flex items-center justify-center w-[150px] truncate border-4 border-yellow-500 transition ${
-              buzzedPlayer?.id !== player.id
-                ? "bg-transparent text-yellow-500"
-                : "bg-yellow-500 text-purple-700"
-            }`}
-          >
-            <div className="text-center flex-grow">
-              <p className="text-xl whitespace-normal">{player.name}</p>
-              <p className="text-2xl">{player.score}</p>
-            </div>
+      {/* Players Section */}
+      <div className="w-screen -m-6">
+        {/* Header with Player Cards */}
+        <div className="relative bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500 overflow-hidden">
+          <div className="absolute inset-0"></div>
+          <div className="relative py-6">
+            {/* Show buzzed player in center if exists */}
+            {buzzedPlayer ? (
+              <div className="flex justify-center items-center">
+                <div className="font-bold px-6 py-4 rounded-2xl shadow-lg flex items-center justify-center w-[160px] border-4 bg-gradient-to-br from-purple-600 to-pink-600 border-pink-400 text-white">
+                  <div className="text-center flex-grow">
+                    <p className="text-2xl font-bold truncate mb-1">
+                      {buzzedPlayer.name}
+                    </p>
+                    <p className="text-xl font-black">
+                      {buzzedPlayer.score?.toLocaleString() || 0}
+                      <span className="text-sm ml-1 opacity-70">pts</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : needsConveyorBelt ? (
+              /* Conveyor belt animation when too many players */
+              <div
+                className="relative flex items-center justify-center overflow-hidden"
+                style={{ height: "104px" }}
+              >
+                <div
+                  className="flex items-center gap-4"
+                  style={{
+                    animation: `scroll ${
+                      totalCardsWidth / 60
+                    }s linear infinite`,
+                    width: "max-content",
+                  }}
+                >
+                  {displayPlayers.map((player, idx) => (
+                    <div
+                      key={`conveyor-${idx}`}
+                      className="font-bold px-6 py-4 rounded-2xl shadow-lg flex items-center justify-center w-[160px] border-4 bg-white bg-opacity-20 backdrop-blur-lg border-white border-opacity-40 text-black flex-shrink-0"
+                    >
+                      <div className="text-center flex-grow">
+                        <p className="text-2xl font-bold truncate mb-1">
+                          {player.name}
+                        </p>
+                        <p className="text-xl font-black">
+                          {player.score?.toLocaleString() || 0}
+                          <span className="text-sm ml-1 opacity-70">pts</span>
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              /* Static centered display when players fit on screen */
+              <div
+                className="flex items-center justify-center gap-4 px-6"
+                style={{ height: "104px" }}
+              >
+                {players.map((player) => (
+                  <div
+                    key={`static-${player.id}`}
+                    className="font-bold px-6 py-4 rounded-2xl shadow-lg flex items-center justify-center w-[160px] border-4 bg-white bg-opacity-20 backdrop-blur-lg border-white border-opacity-40 text-black flex-shrink-0"
+                  >
+                    <div className="text-center flex-grow">
+                      <p className="text-2xl font-bold truncate mb-1">
+                        {player.name}
+                      </p>
+                      <p className="text-xl font-black">
+                        {player.score?.toLocaleString() || 0}
+                        <span className="text-sm ml-1 opacity-70">pts</span>
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        ))}
+          {/* Decorative bottom border */}
+          <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-600 to-pink-600"></div>
+        </div>
+
+        {/* Conveyor Belt Animation */}
+        {needsConveyorBelt && (
+          <style jsx>{`
+            @keyframes scroll {
+              0% {
+                transform: translateX(0px);
+              }
+              100% {
+                transform: translateX(-${totalCardsWidth}px);
+              }
+            }
+          `}</style>
+        )}
       </div>
+
       {/* Game Grid */}
       {game && (
         <div className="flex justify-center w-full">
           <div
-            className="grid gap-6 w-full max-w-screen-xl"
+            className="grid gap-6 w-full max-w-screen-xl mt-6"
             style={{
               gridTemplateColumns: `repeat(${
                 game.categories.filter((cat) => cat.round === currentRound)
@@ -318,7 +428,7 @@ const GameBoard = () => {
             {focusedCategory ? (
               <div className="col-span-full flex items-center justify-center h-[80px] animate-fadeIn">
                 <h3
-                  className="text-4xl font-bold text-yellow-400 p-3 rounded-md cursor-pointer"
+                  className="text-4xl font-bold text-transparent bg-gradient-to-r from-yellow-400 via-yellow-400 to-yellow-400 hover:from-pink-600 hover:via-yellow-400 hover:to-purple-600 bg-clip-text p-3 rounded-md cursor-pointer transition-all duration-300"
                   onClick={() => handleCategoryClick(focusedCategory)}
                 >
                   {focusedCategory}
@@ -334,7 +444,7 @@ const GameBoard = () => {
                       className="flex flex-col items-center w-full"
                     >
                       <h3
-                        className="text-2xl font-bold text-center text-yellow-400 p-3 rounded-md w-full cursor-pointer transition flex items-center justify-center h-full animate-fadeIn"
+                        className="text-2xl font-bold text-center text-transparent bg-gradient-to-r from-yellow-400 via-yellow-400 to-yellow-400 hover:from-pink-600 hover:via-yellow-400 hover:to-purple-600 bg-clip-text p-3 rounded-md w-full cursor-pointer transition-all duration-300 flex items-center justify-center h-full animate-fadeIn"
                         onClick={() => handleCategoryClick(category)}
                       >
                         {category.name}
@@ -345,7 +455,9 @@ const GameBoard = () => {
             )}
 
             {/* Horizontal Line */}
-            <div className="col-span-full border-t-2 border-yellow-400 w-full mb-4" />
+            <div className="col-span-full flex items-center justify-center mb-4">
+              <div className="w-full h-1 bg-gradient-to-r from-pink-600 via-yellow-400 to-purple-600 relative"></div>
+            </div>
 
             {/* Questions */}
             {focusedQuestion ? (
@@ -365,38 +477,56 @@ const GameBoard = () => {
                 />
               </div>
             ) : (
-              game.categories
-                .filter((cat) => cat.round === currentRound)
-                .map((category, idx) => (
-                  <div key={idx} className="flex flex-col items-center w-full">
-                    <div className="space-y-10 w-full">
-                      {questions
-                        .filter(
-                          (q) =>
-                            q.round === currentRound &&
-                            q.category === category.name
-                        )
-                        .sort((a, b) => a.value - b.value)
-                        .map((question, idx) => (
-                          <div
-                            key={idx}
-                            className={`transition-all duration-500 ${
-                              answeredQuestions.includes(question._id)
-                                ? "opacity-0 pointer-events-none"
-                                : ""
-                            }`}
-                            onClick={() => handleQuestionClick(question)}
-                          >
-                            <div className="flex items-center justify-center w-full text-center p-6 bg-yellow-500 text-purple-800 font-bold rounded-3xl hover:bg-yellow-300 cursor-pointer animate-fadeIn">
-                              <h4 className="text-xl">{`${
-                                question.value * currentRound
-                              }`}</h4>
+              <div
+                className="col-span-full min-h-[65vh]"
+                style={{
+                  gridRow: "3 / 4",
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${
+                    game.categories.filter((cat) => cat.round === currentRound)
+                      .length
+                  }, 1fr)`,
+                  gap: "1.5rem",
+                }}
+              >
+                {game.categories
+                  .filter((cat) => cat.round === currentRound)
+                  .map((category, idx) => (
+                    <div
+                      key={idx}
+                      className="flex flex-col items-center w-full h-full"
+                    >
+                      <div className="space-y-10 w-full h-full flex flex-col justify-center">
+                        {questions
+                          .filter(
+                            (q) =>
+                              q.round === currentRound &&
+                              q.category === category.name
+                          )
+                          .sort((a, b) => a.value - b.value)
+                          .map((question, idx) => (
+                            <div
+                              key={idx}
+                              className={`transition-all duration-500 flex-1 ${
+                                answeredQuestions.includes(question._id)
+                                  ? "opacity-0 pointer-events-none"
+                                  : ""
+                              }`}
+                              onClick={() => handleQuestionClick(question)}
+                            >
+                              <div className="p-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-3xl hover:from-pink-700 hover:to-purple-700 transition-all duration-300 ease-in-out">
+                                <div className="flex items-center justify-center w-full h-full text-center p-6 bg-yellow-400 backdrop-blur-lg text-black rounded-3xl hover:bg-yellow-300 cursor-pointer animate-fadeIn">
+                                  <h4 className="text-xl">
+                                    {question.value * currentRound}
+                                  </h4>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+              </div>
             )}
           </div>
         </div>

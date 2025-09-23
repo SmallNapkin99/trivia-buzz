@@ -12,7 +12,7 @@ const sampleQuestionSchema = new mongoose.Schema(
 const categorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String, required: false },
     round: { type: Number, required: true },
     sampleQuestion: { type: sampleQuestionSchema, required: false },
   },

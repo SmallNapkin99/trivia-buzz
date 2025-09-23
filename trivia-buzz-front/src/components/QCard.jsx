@@ -3,6 +3,7 @@ import { LockClosedIcon } from "@heroicons/react/24/solid";
 import { LockOpenIcon } from "@heroicons/react/24/solid";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { XCircleIcon } from "@heroicons/react/24/solid";
+import { CountdownCircleTimer } from "react-countdown-circle-timer";
 
 const QCard = ({
   question,
@@ -11,6 +12,7 @@ const QCard = ({
   onOpenBuzzers,
   onScoreUpdate,
   socket,
+  timerDuration = 20,
 }) => {
   const [questionState, setQuestionState] = React.useState("question");
   const [questionLocked, setQuestionLocked] = React.useState(true);
@@ -19,6 +21,8 @@ const QCard = ({
   const [imageModalOpen, setImageModalOpen] = React.useState(false);
   const [modalImage, setModalImage] = React.useState(null);
   const [isBuzzedPlayer, setIsBuzzedPlayer] = React.useState(false);
+  const [timerKey, setTimerKey] = React.useState(0);
+  const [isTimerActive, setIsTimerActive] = React.useState(false);
 
   const openBuzzerSound = new Audio("/open_buzzers.mp3");
   const rightAnswerSound = new Audio("/correct_answer.mp3");
@@ -45,6 +49,8 @@ const QCard = ({
         const data = JSON.parse(event.data);
         if (data.action === "buzzed_in") {
           setIsBuzzedPlayer(true);
+          //give buzzer player extra time to answer
+          setTimerKey((prev) => prev + 1);
         }
       };
       socket.addEventListener("message", handleMessage);
@@ -64,9 +70,14 @@ const QCard = ({
         return;
       } else {
         setQuestionState("answer");
+        if (question.value) {
+          setIsTimerActive(false);
+          setTimerKey((prev) => prev + 1);
+        }
       }
     } else {
       setQuestionState("question");
+      setIsTimerActive(false);
     }
   };
 
@@ -77,6 +88,7 @@ const QCard = ({
       handleCloseBuzzers();
     }
     setQuestionLocked(!questionLocked);
+    setIsTimerActive(!isTimerActive);
   };
 
   const handleOpenBuzzers = () => {
@@ -96,7 +108,18 @@ const QCard = ({
       wrongAnswerSound.play();
     }
     onScoreUpdate(_scoreUpdate);
+    setIsTimerActive(false);
     onAnswer();
+  };
+
+  const handleTimerComplete = () => {
+    setIsTimerActive(false);
+    if (isBuzzedPlayer) {
+      handleUpdateScore(question.value * -1);
+    } else {
+      onAnswer();
+    }
+    return { shouldRepeat: false };
   };
 
   const handleImageClick = (image) => {
@@ -159,16 +182,43 @@ const QCard = ({
               )}
             </div>
           ) : null}
+
+          {/* Timer in Top Right */}
+          {question.value && isTimerActive && (
+            <div className="absolute top-4 right-4">
+              <CountdownCircleTimer
+                key={timerKey}
+                isPlaying={isTimerActive}
+                duration={timerDuration}
+                colors={["#10B981", "#F59E0B", "#EF4444", "#DC2626"]}
+                colorsTime={[
+                  timerDuration * 0.6,
+                  timerDuration * 0.4,
+                  timerDuration * 0.2,
+                  0,
+                ]}
+                size={80}
+                strokeWidth={6}
+                onComplete={handleTimerComplete}
+              >
+                {({ remainingTime }) => (
+                  <div className="text-white text-sm font-bold">
+                    {remainingTime}
+                  </div>
+                )}
+              </CountdownCircleTimer>
+            </div>
+          )}
         </>
       ) : (
         <div className="flex flex-col items-center max-h-[65vh] overflow-hidden animate-fadeIn">
           <h4 className="text-3xl mb-4">{`${question.answer}`}</h4>
           {imageSrc && (
-            <div className="flex justify-center items-center w-full">
+            <div className="flex justify-center items-center w-full h-full">
               <img
                 src={imageSrc}
                 alt="answer_image"
-                className="max-w-[50%] max-h-[50%] object-contain cursor-zoom-in rounded-2xl"
+                className="max-w-[70%] max-h-[calc(65vh-2rem)] object-contain cursor-zoom-in rounded-2xl"
                 onClick={() => handleImageClick(imageSrc)}
               />
             </div>
@@ -176,21 +226,41 @@ const QCard = ({
         </div>
       )}
 
-      {/* Buttons on the right */}
+      {/* Modern Gameshow Style Buttons */}
       {question.value && questionState === "answer" && (
-        <div className="absolute top-1/2 right-4 flex flex-col space-y-16 transform -translate-y-1/2">
-          <button
-            className="p-3 bg-green-700 text-white rounded-full hover:bg-green-600 transition animate-fadeIn"
-            onClick={() => handleUpdateScore(question.value)}
-          >
-            <CheckCircleIcon className="w-12 h-12" />
-          </button>
-          <button
-            className="p-3 bg-red-700 text-white rounded-full hover:bg-red-600 transition animate-fadeIn"
-            onClick={() => handleUpdateScore(question.value * -1)}
-          >
-            <XCircleIcon className="w-12 h-12" />
-          </button>
+        <div className="absolute top-1/2 right-8 flex flex-col space-y-6 transform -translate-y-1/2">
+          <div className="w-20 h-20 flex items-center justify-center">
+            <div
+              className={`p-1 rounded-2xl hover:p-2 transition-all duration-300 ease-in-out animate-fadeIn ${
+                isDailyDouble
+                  ? "bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-400"
+                  : "bg-gradient-to-r from-pink-400 via-purple-500 to-pink-600"
+              }`}
+            >
+              <button
+                className="p-4 bg-green-600 bg-opacity-90 backdrop-blur-lg text-white rounded-2xl hover:bg-green-500 hover:bg-opacity-95 transition-all duration-200 shadow-lg hover:shadow-xl"
+                onClick={() => handleUpdateScore(question.value)}
+              >
+                <CheckCircleIcon className="w-10 h-10" />
+              </button>
+            </div>
+          </div>
+          <div className="w-20 h-20 flex items-center justify-center">
+            <div
+              className={`p-1 rounded-2xl hover:p-2 transition-all duration-300 ease-in-out animate-fadeIn ${
+                isDailyDouble
+                  ? "bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-400"
+                  : "bg-gradient-to-r from-pink-400 via-purple-500 to-pink-600"
+              }`}
+            >
+              <button
+                className="p-4 bg-red-600 bg-opacity-90 backdrop-blur-lg text-white rounded-2xl hover:bg-red-500 hover:bg-opacity-95 transition-all duration-200 shadow-lg hover:shadow-xl"
+                onClick={() => handleUpdateScore(question.value * -1)}
+              >
+                <XCircleIcon className="w-10 h-10" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

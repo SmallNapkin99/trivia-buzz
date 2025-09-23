@@ -147,11 +147,27 @@ wss.on("connection", (ws) => {
     if (data.action === "close_buzzers") {
       console.log("Buzzers closed.");
       buzzersActive = false;
+      const lockBuzzersMessage = JSON.stringify({
+        action: "lock_buzzers",
+      });
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(lockBuzzersMessage);
+        }
+      });
     }
 
     if (data.action === "open_buzzers") {
       console.log("Buzzers opened.");
       buzzersActive = true;
+      const unlockBuzzersMessage = JSON.stringify({
+        action: "unlock_buzzers",
+      });
+      wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(unlockBuzzersMessage);
+        }
+      });
     }
 
     if (data.action === "buzzed") {
@@ -166,16 +182,6 @@ wss.on("connection", (ws) => {
         wss.clients.forEach((client) => {
           if (client.readyState === WebSocket.OPEN) {
             client.send(buzzedInMessage);
-          }
-        });
-      } else {
-        const buzzerLockUpdate = JSON.stringify({
-          action: "lock_buzzer",
-          playerId: playerId,
-        });
-        wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(buzzerLockUpdate);
           }
         });
       }
