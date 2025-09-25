@@ -8,7 +8,8 @@ const CreateGame = () => {
   const [questionsPerCategory, setQuestionsPerCategory] = React.useState(5);
   const [rounds, setRounds] = React.useState(2);
   const [showNotification, setShowNotification] = React.useState(false);
-  const [notificationStatus, setNotificationStatus] = React.useState("success"); // "success" or "error"
+  const [finalTrivia, setFinalTrivia] = React.useState(false);
+  const [notificationStatus, setNotificationStatus] = React.useState("success");
   const navigate = useNavigate();
 
   const createGame = async (gameData) => {
@@ -170,6 +171,55 @@ const CreateGame = () => {
               </div>
             </div>
           </div>
+
+          {/* Final Trivia */}
+          <div className="group w-full">
+            <label className="block text-white text-lg font-semibold mb-4 text-center group-hover:text-yellow-300 transition-colors duration-300">
+              Final Trivia
+            </label>
+            <div className="relative bg-gradient-to-br from-orange-400 via-red-400 to-pink-500 rounded-2xl p-6 shadow-xl">
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setFinalTrivia(!finalTrivia)}
+                  className={`flex items-center justify-center w-20 h-12 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-110 ${
+                    finalTrivia
+                      ? "bg-white text-red-600 shadow-lg scale-105"
+                      : "bg-white bg-opacity-20 text-white hover:bg-opacity-30 border-2 border-white border-opacity-40"
+                  }`}
+                >
+                  {finalTrivia ? (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="3"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Game Summary */}
@@ -225,6 +275,9 @@ const CreateGame = () => {
               questionTotal: questionsPerCategory * categoriesPerRound * rounds,
               categories: createCategoriesStructure(),
               rounds: rounds,
+              finalTrivia: finalTrivia
+                ? { question: "", answer: "" }
+                : undefined,
             })
           }
           disabled={!gameName.trim()}

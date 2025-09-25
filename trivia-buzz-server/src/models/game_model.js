@@ -19,11 +19,21 @@ const categorySchema = new mongoose.Schema(
   { _id: false }
 );
 
+const finalTriviaSchema = new mongoose.Schema(
+  {
+    question: { type: String, required: false },
+    answer: { type: String, required: false },
+    imageId: { type: mongoose.Schema.Types.ObjectId, required: false },
+  },
+  { _id: false }
+);
+
 const gameSchema = new mongoose.Schema({
   name: { type: String, required: true },
   questionTotal: { type: Number, required: true },
   categories: { type: [categorySchema], required: true },
   rounds: { type: Number, required: true },
+  finalTrivia: { type: finalTriviaSchema, required: false },
 });
 
 const Game = mongoose.model("Game", gameSchema);

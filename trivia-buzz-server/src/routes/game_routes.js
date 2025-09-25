@@ -69,6 +69,40 @@ router.put("/:id", upload.none(), async (req, res) => {
   }
 });
 
+//update final trivia for a game by ID
+router.put("/:id/final-trivia", upload.none(), async (req, res) => {
+  try {
+    const { question, answer, imageId } = req.body;
+    const gameId = req.params.id;
+
+    const finalTriviaUpdate = {
+      question: question,
+      answer: answer,
+      imageId: imageId ?? null,
+    };
+
+    if (imageId === "null") {
+      finalTriviaUpdate.imageId = null;
+    }
+
+    const updatedGame = await Game.findByIdAndUpdate(
+      gameId,
+      { $set: { finalTrivia: finalTriviaUpdate } },
+      { new: true }
+    );
+
+    if (!updatedGame) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    res.json(updatedGame);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Error updating final trivia", message: err.message });
+  }
+});
+
 //Add a new game
 router.post("/", async (req, res) => {
   try {
