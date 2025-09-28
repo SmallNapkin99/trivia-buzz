@@ -2,6 +2,7 @@ import express from "express";
 import Game from "../models/game_model.js";
 import Question from "../models/question_model.js";
 import multer from "multer";
+import StringMatcher from "../utils/string_matcher.js";
 
 const router = express.Router();
 const upload = multer();
@@ -100,6 +101,78 @@ router.put("/:id/final-trivia", upload.none(), async (req, res) => {
     res
       .status(500)
       .json({ error: "Error updating final trivia", message: err.message });
+  }
+});
+
+//check final trivia answer
+router.post("/:id/check-final-answer", upload.none(), async (req, res) => {
+  try {
+    const gameId = req.params.id;
+    const { userAnswer, playerId } = req.body;
+
+    // Validate input
+    if (!userAnswer || !playerId) {
+      return res.status(400).json({
+        error: "Missing required fields",
+        required: ["userAnswer", "playerId"],
+      });
+    }
+
+    // Get the game and its final trivia
+    const game = await Game.findById(gameId);
+    if (!game) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    if (!game.finalTrivia || !game.finalTrivia.answer) {
+      return res
+        .status(400)
+        .json({ error: "No final trivia question configured for this game" });
+    }
+
+    const correctAnswer = game.finalTrivia.answer;
+
+    // Check answer using advanced matching
+    const matchResult = StringMatcher.advancedMatch(userAnswer, correctAnswer, {
+      strictThreshold: 0.85, // 85% similarity for strict match
+      lenientThreshold: 0.7, // 70% similarity for partial match
+      enableWordOrder: true, // Check word-by-word for multi-word answers
+      enablePartialMatch: true, // Allow partial matches
+    });
+
+    // Prepare response
+    const response = {
+      isCorrect: matchResult.isMatch,
+      userAnswer: userAnswer.trim(),
+      correctAnswer: correctAnswer,
+      similarity: matchResult.score,
+      strategy: matchResult.strategy,
+      playerId: playerId,
+      gameId: gameId,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Add debug info in development
+    if (process.env.NODE_ENV === "development") {
+      response.debug = {
+        threshold: matchResult.threshold,
+        method: matchResult.method,
+        allResults: matchResult.allResults,
+      };
+    }
+
+    // Log for analytics/debugging
+    console.log(
+      `Final Answer Check - Game: ${gameId}, Player: ${playerId}, Correct: ${matchResult.isMatch}, Score: ${matchResult.score}, Strategy: ${matchResult.strategy}`
+    );
+
+    res.json(response);
+  } catch (err) {
+    console.error("Error checking final trivia answer:", err);
+    res.status(500).json({
+      error: "Error checking answer",
+      message: err.message,
+    });
   }
 });
 

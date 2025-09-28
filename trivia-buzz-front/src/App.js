@@ -11,6 +11,9 @@ import PlayerList from "./components/PlayerList";
 import Buzzer from "./components/Buzzer";
 import GameBoard from "./components/GameBoard";
 import Podium from "./components/Podium";
+import FinalTriviaInput from "./components/FinalTriviaInput";
+import FinalTriviaQuestion from "./components/FinalTriviaQuestion";
+import GameEnd from "./components/GameEnd";
 import {
   Routes,
   Route,
@@ -28,7 +31,13 @@ function App() {
   };
 
   // Define which routes should NOT show the footer
-  const routesWithoutFooter = ["/buzzer", "/readyup"];
+  const routesWithoutFooter = [
+    "/buzzer",
+    "/readyup",
+    "/gameboard",
+    "/finaltriviainput",
+    "/endgame",
+  ];
 
   const shouldHideFooter = routesWithoutFooter.some((route) =>
     location.pathname.includes(route)
@@ -53,6 +62,15 @@ function App() {
                   <Route path="buzzer" element={<Buzzer />} />
                   <Route path="gameboard" element={<GameBoard />} />
                   <Route path="podium" element={<Podium />} />
+                  <Route
+                    path="final-trivia-question"
+                    element={<FinalTriviaQuestion />}
+                  />
+                  <Route
+                    path="final-trivia-input"
+                    element={<FinalTriviaInput />}
+                  />
+                  <Route path="endgame" element={<GameEnd />} />
                 </Routes>
               </WebSocketProvider>
             }

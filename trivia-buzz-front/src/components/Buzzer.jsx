@@ -1,11 +1,12 @@
 import React from "react";
 import { HandRaisedIcon } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useWebSocket } from "./WebSocketContext";
 
 const Buzzer = () => {
   const socket = useWebSocket();
   const location = useLocation();
+  const navigate = useNavigate();
   const { playerId } = location.state || {};
   const [player, setPlayer] = React.useState(null);
   const [lockBuzzer, setLockBuzzer] = React.useState(true);
@@ -39,8 +40,16 @@ const Buzzer = () => {
           setPlayer(currentPlayer);
         }
         if (data.action === "game_ended") {
-          alert("The game has ended.");
-          //navigate to a podium screen
+          const { gameId } = data;
+          //navigate to game end screen
+          navigate(`/game/${gameId}/endgame`);
+        }
+        if (data.action === "final_trivia_started") {
+          const { gameId } = data;
+          //navigate to final trivia input screen
+          navigate(`/game/${gameId}/final-trivia-input`, {
+            state: { playerId: playerId },
+          });
         }
       };
       socket.send(

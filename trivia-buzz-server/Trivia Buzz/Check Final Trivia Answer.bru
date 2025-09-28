@@ -1,0 +1,23 @@
+meta {
+  name: Check Final Trivia Answer
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:8080/api/games/:id/check-final-answer
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 68d20ac904bcfa4ffcd9113a
+}
+
+body:json {
+  { "answer": "The FINAL Answer", "playerId": "123"}
+}
+
+settings {
+  encodeUrl: true
+}
