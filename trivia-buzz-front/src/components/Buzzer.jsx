@@ -48,7 +48,7 @@ const Buzzer = () => {
           const { gameId } = data;
           //navigate to final trivia input screen
           navigate(`/game/${gameId}/final-trivia-input`, {
-            state: { playerId: playerId },
+            state: { playerId },
           });
         }
       };

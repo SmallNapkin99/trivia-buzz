@@ -8,7 +8,7 @@ const FinalTriviaInput = () => {
   const navigate = useNavigate();
   const { id: gameId } = useParams();
   const { playerId } = location.state || {};
-  const { socket } = useWebSocket();
+  const socket = useWebSocket();
   const [player, setPlayer] = React.useState(null);
   const [wager, setWager] = React.useState(0);
   const [wagerSubmitted, setWagerSubmitted] = React.useState(false);
@@ -21,18 +21,18 @@ const FinalTriviaInput = () => {
       //set socket listener
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        //set listener to set player state
+        if (data.action === "set_player_list") {
+          const { players: playerList } = data;
+          const currentPlayer = playerList.find((p) => p.id === playerId);
+          setPlayer(currentPlayer);
+        }
         //handle score updates
         if (data.action === "update_score") {
           const { playerId: updatedPlayerId, newScore } = data;
           if (updatedPlayerId === playerId) {
             setPlayer((prevPlayer) => ({ ...prevPlayer, score: newScore }));
           }
-        }
-        //set listener to set player state
-        if (data.action === "set_player_list") {
-          const { players: playerList } = data;
-          const currentPlayer = playerList.find((p) => p.id === playerId);
-          setPlayer(currentPlayer);
         }
         if (data.action === "game_ended") {
           const { gameId } = data;

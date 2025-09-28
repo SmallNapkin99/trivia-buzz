@@ -1,8 +1,10 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { useWebSocket } from "./WebSocketContext";
 
 const Podium = () => {
   const location = useLocation();
+  const socket = useWebSocket();
   const { players = [] } = location.state || {};
 
   // Sort players by score and take top 3
@@ -29,12 +31,30 @@ const Podium = () => {
     }
   };
 
+  const handleAllPlayersRevealed = () => {
+    if (socket) {
+      socket.send(
+        JSON.stringify({
+          action: "end_game",
+        })
+      );
+    }
+  };
+
   const revealNext = () => {
     if (revealedCount < topPlayers.length && !isRevealing) {
       setIsRevealing(true);
       setTimeout(() => {
-        setRevealedCount((prev) => prev + 1);
+        const newRevealedCount = revealedCount + 1;
+        setRevealedCount(newRevealedCount);
         setIsRevealing(false);
+
+        // Check if this was the last player
+        if (newRevealedCount >= topPlayers.length) {
+          // All players now revealed - run your logic here
+          console.log("All players revealed!");
+          handleAllPlayersRevealed();
+        }
       }, 300);
     }
   };

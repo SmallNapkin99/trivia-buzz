@@ -51,6 +51,7 @@ let firstPlayerToBuzz = null;
 let playersSubmittedWager = new Set();
 let playersSubmittedFinal = new Set();
 let buzzerLockTime = null;
+let firstConnection = null;
 
 // PERFORMANCE OPTIMIZATIONS
 const MESSAGE_BATCH_SIZE = 50; // Send messages in batches
@@ -150,6 +151,8 @@ function cleanupConnection(ws) {
 const resetGame = () => {
   console.log("Resetting game. Clearing all player data...");
   players.clear();
+  playersSubmittedWager.clear();
+  playersSubmittedFinal.clear();
   questionsAnswered.clear();
   connectionToPlayer.clear();
   playerConnections.clear();
@@ -207,9 +210,17 @@ function handleBuzz(playerId, ws) {
 wss.on("connection", (ws) => {
   console.log(`New connection. Total clients: ${wss.clients.size}`);
 
-  // Connection timeout
+  // Mark first connection - it never gets timed out
+  let isFirstConnection = false;
+  if (!firstConnection) {
+    firstConnection = ws;
+    isFirstConnection = true;
+    console.log("First connection established - will never timeout");
+  }
+
+  // Connection timeout - but skip for first connection
   const connectionTimeout = setTimeout(() => {
-    if (ws.readyState === WebSocket.OPEN) {
+    if (ws.readyState === WebSocket.OPEN && !isFirstConnection) {
       ws.close(1000, "Connection timeout - no player registration");
     }
   }, 30000); // 30 second timeout to register
@@ -391,6 +402,12 @@ wss.on("connection", (ws) => {
             gameId: data.gameId,
             timestamp: now,
           });
+          //kill all connections
+          wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+              client.close(1001, "Game ended - server reset");
+            }
+          });
           break;
 
         case "final_trivia_input":
@@ -490,6 +507,11 @@ wss.on("connection", (ws) => {
   ws.on("close", () => {
     console.log(`Connection closed. Total clients: ${wss.clients.size - 1}`);
     cleanupConnection(ws);
+
+    if (ws === firstConnection) {
+      firstConnection = null;
+      console.log("First connection closed");
+    }
   });
 
   ws.on("error", (error) => {
