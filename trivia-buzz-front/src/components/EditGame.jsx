@@ -49,6 +49,13 @@ const EditGame = () => {
     round: "",
     imageId: null,
   });
+  const [selectedFinalTrivia, setSelectedFinalTrivia] = React.useState(null);
+  const [finalTriviaDetail, setFinalTriviaDetail] = React.useState({
+    question: "",
+    answer: "",
+    value: "",
+    imageId: null,
+  });
   const [modalImage, setModalImage] = React.useState(null);
   const [imageModalOpen, setImageModalOpen] = React.useState(false);
   const [imageFile, setImageFile] = React.useState(null);
@@ -129,7 +136,17 @@ const EditGame = () => {
       setGameStructure(structuredGame);
     };
 
-    if (!game) return;
+    if (!game) {
+      return;
+    } else {
+      if (game?.finalTrivia) {
+        setFinalTriviaDetail({
+          question: game.finalTrivia.question || "",
+          answer: game.finalTrivia.answer || "",
+          imageId: game.finalTrivia.imageId || null,
+        });
+      }
+    }
     let questions;
 
     try {
@@ -203,6 +220,15 @@ const EditGame = () => {
     }
   };
 
+  const openFinalTriviaDialog = () => {
+    setSelectedFinalTrivia(true);
+    if (finalTriviaDetail?.imageId) {
+      setImageSrc(
+        `${process.env.REACT_APP_API_URL}/images/${finalTriviaDetail.imageId}`
+      );
+    }
+  };
+
   const closeCategoryDialog = () => {
     setImageFile(null);
     setImageSrc(null);
@@ -213,6 +239,12 @@ const EditGame = () => {
     setImageFile(null);
     setImageSrc(null);
     setSelectedQuestion(null);
+  };
+
+  const closeFinalTriviaDialog = () => {
+    setImageFile(null);
+    setImageSrc(null);
+    setSelectedFinalTrivia(null);
   };
 
   const handleCategorySave = async () => {
@@ -341,6 +373,43 @@ const EditGame = () => {
     return action()
       .then(() => fetchQuestions())
       .catch((err) => console.error("Error saving question:", err));
+  };
+
+  const handleFinalTriviaSave = async () => {
+    try {
+      //check for image
+      const finalTriviaFormData = new FormData();
+      const imageFormData = new FormData();
+      if (imageFile) {
+        if (finalTriviaDetail.imageId) {
+          await handleDeleteImage(finalTriviaDetail.imageId);
+        }
+        imageFormData.append("file", imageFile);
+        const upload_res = await fetch(
+          `${process.env.REACT_APP_API_URL}/images/upload`,
+          {
+            method: "POST",
+            body: imageFormData,
+          }
+        );
+        finalTriviaFormData.append("imageId", (await upload_res.json()).fileId);
+      }
+      finalTriviaFormData.append("question", finalTriviaDetail.question);
+      finalTriviaFormData.append("answer", finalTriviaDetail.answer);
+
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/games/${gameId}/final-trivia`,
+        {
+          method: "PUT",
+          body: finalTriviaFormData,
+        }
+      );
+      closeFinalTriviaDialog();
+      const updatedGame = await response.json();
+      setFinalTriviaDetail(updatedGame.finalTrivia);
+    } catch (err) {
+      console.error("Error saving final trivia:", err);
+    }
   };
 
   const updateGameCategory = async () => {
@@ -488,6 +557,25 @@ const EditGame = () => {
           method: "POST",
           body: questionFormData,
         });
+      }
+      if (selectedFinalTrivia) {
+        setFinalTriviaDetail((prev) => ({
+          ...prev,
+          imageId: null,
+        }));
+        //null out the imageId in the backend
+        const finalTriviaFormData = new FormData();
+        finalTriviaFormData.append("question", finalTriviaDetail.question);
+        finalTriviaFormData.append("answer", finalTriviaDetail.answer);
+        finalTriviaFormData.append("imageId", "null");
+
+        await fetch(
+          `${process.env.REACT_APP_API_URL}/games/${gameId}/final-trivia`,
+          {
+            method: "PUT",
+            body: finalTriviaFormData,
+          }
+        );
       }
       //fetch game and set game state to run fetchQuestions
       const game_res = await fetch(
@@ -665,6 +753,37 @@ const EditGame = () => {
                   </div>
                 )
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Final Trivia Section */}
+        {game?.finalTrivia && (
+          <div className="w-full max-w-screen-xl mt-12">
+            <div
+              className="col-span-full h-0.5 bg-gradient-to-r from-green-500 to-emerald-600 
+                        w-full mb-8 shadow-sm"
+            />
+            <div className="flex justify-center">
+              <div
+                className="w-full max-w-md text-center p-8 
+                       bg-gradient-to-br from-green-500 via-emerald-500 to-green-600 
+                       text-white font-bold rounded-xl 
+                       border-4 border-green-400
+                       hover:bg-gradient-to-br hover:from-green-400 hover:via-emerald-400 hover:to-green-500
+                       hover:border-green-300
+                       cursor-pointer transition-all duration-300 transform hover:scale-105 hover:-translate-y-1
+                       active:scale-95 active:translate-y-0
+                       h-40 flex flex-col justify-center shadow-xl"
+                onClick={openFinalTriviaDialog}
+              >
+                <h4 className="text-3xl font-black tracking-wider drop-shadow-lg mb-2">
+                  FINAL TRIVIA
+                </h4>
+                <p className="text-lg opacity-90 font-semibold">
+                  Click to edit the final question
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -1252,6 +1371,277 @@ const EditGame = () => {
             <Button
               variant="contained"
               onClick={handleQuestionSave}
+              sx={{
+                background:
+                  "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+                color: "rgb(88, 28, 135)",
+                borderRadius: "12px",
+                padding: "10px 24px",
+                fontWeight: "600",
+                textTransform: "none",
+                boxShadow: "0 4px 14px 0 rgba(250, 204, 21, 0.3)",
+                "&:hover": {
+                  background:
+                    "linear-gradient(135deg, rgb(254, 240, 138) 0%, rgb(250, 204, 21) 100%)",
+                  boxShadow: "0 6px 20px 0 rgba(250, 204, 21, 0.4)",
+                  transform: "translateY(-1px)",
+                },
+                transition: "all 0.2s ease",
+              }}
+            >
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Dialog for Editing Final Trivia */}
+        <Dialog
+          open={!!selectedFinalTrivia}
+          onClose={closeFinalTriviaDialog}
+          fullWidth
+          maxWidth="xs"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            "& .MuiDialog-paper": {
+              borderRadius: "16px",
+            },
+          }}
+        >
+          <DialogTitle
+            variant="h5"
+            className="text-white text-center font-semibold"
+            sx={{
+              background:
+                "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+              color: "rgb(88, 28, 135)",
+              fontWeight: "600",
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+              padding: "1.5rem",
+              fontSize: "1.5rem",
+            }}
+          >
+            Final Trivia
+          </DialogTitle>
+          <DialogContent
+            className="max-w-md w-full flex"
+            sx={{
+              width: "100%",
+              height: "100%",
+              flexGrow: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              overflowY: "auto",
+              background:
+                "linear-gradient(90deg, rgb(147, 51, 234) 0%, rgb(219, 39, 119) 100%)",
+              padding: "1.5rem 1.5rem 0.75rem 1.5rem",
+            }}
+          >
+            <div className="space-y-4 mt-6">
+              <TextField
+                color="secondary"
+                margin="dense"
+                fullWidth
+                value={finalTriviaDetail.question}
+                onChange={(e) =>
+                  setFinalTriviaDetail({
+                    ...finalTriviaDetail,
+                    question: e.target.value,
+                  })
+                }
+                label="Question"
+                variant="standard"
+                multiline
+                sx={{
+                  "& .MuiInputLabel-root": {
+                    color: "rgb(245, 158, 11)",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+
+                  // Focused underline
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "rgb(234, 179, 8)", // match label focused
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "white",
+                  },
+                }}
+              />
+              <TextField
+                color="secondary"
+                margin="dense"
+                fullWidth
+                value={finalTriviaDetail.answer}
+                onChange={(e) =>
+                  setFinalTriviaDetail({
+                    ...finalTriviaDetail,
+                    answer: e.target.value,
+                  })
+                }
+                label="Answer"
+                variant="standard"
+                multiline
+                sx={{
+                  "& .MuiInputLabel-root": {
+                    color: "rgb(245, 158, 11)",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "rgb(234, 179, 8)", // yellow-500 color
+                  },
+
+                  // Focused underline
+                  "& .MuiInput-underline:after": {
+                    borderBottomColor: "rgb(234, 179, 8)", // match label focused
+                  },
+                  "& .MuiInputBase-input": {
+                    color: "white",
+                  },
+                }}
+              />
+              {/* Image Upload & Delete Buttons */}
+              <div className="flex items-center gap-3">
+                <Button
+                  className="flex-grow"
+                  component="label"
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<FileUploadIcon />}
+                  sx={{
+                    background:
+                      "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",
+                    color: "rgb(88, 28, 135)",
+                    fontWeight: "600",
+                    borderRadius: "12px",
+                    padding: "12px 20px",
+                    textTransform: "none",
+                    boxShadow: "0 4px 14px 0 rgba(250, 204, 21, 0.3)",
+                    "&:hover": {
+                      background:
+                        "linear-gradient(135deg, rgb(254, 240, 138) 0%, rgb(250, 204, 21) 100%)",
+                      boxShadow: "0 6px 20px 0 rgba(250, 204, 21, 0.4)",
+                      transform: "translateY(-1px)",
+                    },
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  Image
+                  <VisuallyHiddenInput
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(e.target.files[0])}
+                  />
+                </Button>
+                <Tooltip title="Delete Image" arrow>
+                  <span>
+                    <Button
+                      variant="contained"
+                      disabled={!finalTriviaDetail.imageId}
+                      onClick={() =>
+                        handleDeleteImage(finalTriviaDetail.imageId)
+                      }
+                      sx={{
+                        background: finalTriviaDetail.imageId
+                          ? "linear-gradient(135deg, rgb(239, 68, 68) 0%, rgb(220, 38, 38) 100%)"
+                          : "rgb(156, 163, 175)",
+                        color: "white",
+                        minWidth: "48px",
+                        height: "48px",
+                        borderRadius: "12px",
+                        border: finalTriviaDetail.imageId
+                          ? "2px solid rgb(153, 27, 27)"
+                          : "none",
+                        boxShadow: finalTriviaDetail.imageId
+                          ? "0 4px 14px 0 rgba(239, 68, 68, 0.3)"
+                          : "none",
+                        "&:hover": {
+                          background: finalTriviaDetail.imageId
+                            ? "linear-gradient(135deg, rgb(248, 113, 113) 0%, rgb(239, 68, 68) 100%)"
+                            : "rgb(156, 163, 175)",
+                          border: finalTriviaDetail.imageId
+                            ? "2px solid rgb(127, 29, 29)"
+                            : "none",
+                          transform: finalTriviaDetail.imageId
+                            ? "translateY(-1px)"
+                            : "none",
+                        },
+                        "&:disabled": {
+                          background: "rgb(156, 163, 175)",
+                          color: "rgb(107, 114, 128)",
+                          border: "none",
+                        },
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      <DeleteForever />
+                    </Button>
+                  </span>
+                </Tooltip>
+              </div>
+              {imageSrc && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    height: "100%",
+                    overflow: "auto",
+                    backgroundColor: "transparent",
+                    borderRadius: "12px",
+                    padding: "16px",
+                  }}
+                >
+                  <img
+                    src={imageSrc}
+                    alt="Question"
+                    style={{
+                      maxWidth: "50%",
+                      maxHeight: "50%",
+                      objectFit: "contain",
+                      cursor: "zoom-in",
+                      borderRadius: "8px",
+                    }}
+                    onClick={() => handleImageClick(imageSrc)}
+                  />
+                </div>
+              )}
+            </div>
+          </DialogContent>
+          <DialogActions
+            sx={{
+              background:
+                "linear-gradient(90deg, rgb(147, 51, 234) 0%, rgb(219, 39, 119) 100%)",
+              padding: "0.75rem 1.5rem 1.5rem",
+              gap: "12px",
+            }}
+          >
+            <Button
+              variant="outlined"
+              onClick={closeFinalTriviaDialog}
+              sx={{
+                borderColor: "rgb(250, 204, 21)",
+                color: "rgb(250, 204, 21)",
+                borderRadius: "12px",
+                padding: "10px 24px",
+                fontWeight: "500",
+                textTransform: "none",
+                "&:hover": {
+                  color: "rgb(234, 179, 8)",
+                  borderColor: "rgb(245, 158, 11)",
+                  backgroundColor: "rgba(250, 204, 21, 0.04)",
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleFinalTriviaSave}
               sx={{
                 background:
                   "linear-gradient(135deg, rgb(250, 204, 21) 0%, rgb(245, 158, 11) 100%)",

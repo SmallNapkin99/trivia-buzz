@@ -249,16 +249,30 @@ const GameBoard = () => {
   };
 
   const handleEndGame = () => {
-    console.log("Ending game...");
-    if (socket) {
-      socket.send(
-        JSON.stringify({
-          action: "end_game",
-        })
-      );
+    //navigate to podium or final trivia question
+    if (!game?.finalTrivia) {
+      console.log("Ending game...");
+      if (socket) {
+        socket.send(
+          JSON.stringify({
+            action: "end_game",
+            gameId: gameId,
+          })
+        );
+      }
+      navigate(`/game/${gameId}/podium`, { state: { players } });
+    } else {
+      console.log("Moving to final trivia...");
+      if (socket) {
+        socket.send(
+          JSON.stringify({
+            action: "final_trivia_input",
+            gameId: gameId,
+          })
+        );
+      }
+      navigate(`/game/${gameId}/final-trivia-question`);
     }
-    //navigate to podium
-    navigate(`/game/${gameId}/podium`, { state: { players } });
   };
 
   const handleCategoryClick = (category) => {

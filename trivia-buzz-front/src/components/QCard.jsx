@@ -12,7 +12,7 @@ const QCard = ({
   onOpenBuzzers,
   onScoreUpdate,
   socket,
-  timerDuration = 20,
+  timerDuration = 15,
 }) => {
   const [questionState, setQuestionState] = React.useState("question");
   const [questionLocked, setQuestionLocked] = React.useState(true);
